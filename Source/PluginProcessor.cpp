@@ -19,7 +19,11 @@ NewProjectAudioProcessor::NewProjectAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
+                    //AudioProcessorValueTreeState does not have a default constructor
+                    //“this” is the reference to the class we are in right now.
+                    //We have to dereference the pointer with *.
+                    mAPVTS(*this, nullptr, "Parameters", createParameters())
 #endif
 {
 }
@@ -191,4 +195,19 @@ void NewProjectAudioProcessor::setStateInformation (const void* data, int sizeIn
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new NewProjectAudioProcessor();
+}
+
+//==============================================================================
+//return ParameterLayout for AudioProcessorValueTreeState
+juce::AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::createParameters()
+{
+    //a list of RangedAudioParameter pointers
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
+    
+    //add new parameters to params with push_back
+    //AudioParameterFloat is a type of RangedAudioParameter
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("GAIN", "Gain", 0.0f, 1.0f, 1.0f));
+    
+    //vector::begin() function is a bidirectional iterator used to return an iterator pointing to the first element of the container.
+    return {params.begin(), params.end()};
 }

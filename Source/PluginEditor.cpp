@@ -22,6 +22,7 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
     mGainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
     mGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 300, 80);
     mGainSlider.setTextValueSuffix(" dB");
+    
     mGainSlider.setNumDecimalPlacesToDisplay(0);
     mGainSlider.setRange(-30.0, 12.0);
     mGainSlider.setValue(0.0);
