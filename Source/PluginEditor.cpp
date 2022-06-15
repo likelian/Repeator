@@ -50,17 +50,3 @@ void NewProjectAudioProcessorEditor::resized()
     // subcomponents in your editor..
     mGainSlider.setBounds(300, 50, 30, 150);
 }
-
-
-/*
-void NewProjectAudioProcessorEditor::sliderValueChanged(Slider* slider)
-{
-    if (slider == &mGainSlider)
-    {
-        audioProcessor.mGain = pow(10., mGainSlider.getValue()/20.);
-        
-        if (mGainSlider.getValue() <= -29.9)
-            audioProcessor.mGain = 0.0;
-    }
-}
- */

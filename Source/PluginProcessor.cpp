@@ -140,6 +140,11 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     auto totalNumOutputChannels = getTotalNumOutputChannels();
     
     mGain = mAPVTS.getRawParameterValue("GAIN")->load();
+    if(mGain < -29.9)
+        mGain = 0.;
+    else
+        mGain = pow(10., mGain/20.);
+    
 
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
@@ -208,7 +213,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::cr
     
     //add new parameters to params with push_back
     //AudioParameterFloat is a type of RangedAudioParameter
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("GAIN", "Gain", 0.0f, 1.0f, 1.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("GAIN", "Gain", -30.0f, 12.0f, 0.0f));
     
     //vector::begin() function is a bidirectional iterator used to return an iterator pointing to the first element of the container.
     return {params.begin(), params.end()};
