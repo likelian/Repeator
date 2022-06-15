@@ -17,6 +17,8 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
     // editor's size to whatever you need it to be.
     setSize (400, 200);
     
+    mGainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.mAPVTS, "GAIN", mGainSlider);
+    
     
     addAndMakeVisible(mGainSlider);
     mGainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
@@ -26,7 +28,7 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
     mGainSlider.setNumDecimalPlacesToDisplay(0);
     mGainSlider.setRange(-30.0, 12.0);
     mGainSlider.setValue(0.0);
-    mGainSlider.addListener(this);
+    //mGainSlider.addListener(this);
 
 }
 
@@ -39,10 +41,6 @@ void NewProjectAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
-    
-    
-    
-
 
 }
 
@@ -54,7 +52,7 @@ void NewProjectAudioProcessorEditor::resized()
 }
 
 
-
+/*
 void NewProjectAudioProcessorEditor::sliderValueChanged(Slider* slider)
 {
     if (slider == &mGainSlider)
@@ -65,3 +63,4 @@ void NewProjectAudioProcessorEditor::sliderValueChanged(Slider* slider)
             audioProcessor.mGain = 0.0;
     }
 }
+ */

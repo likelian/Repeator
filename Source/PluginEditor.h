@@ -15,10 +15,8 @@
 /**
 */
 class NewProjectAudioProcessorEditor  :
-public AudioProcessorEditor,
-public Slider::Listener
+public AudioProcessorEditor
 //public FileDragAndDropTarget
-
 {
 public:
     NewProjectAudioProcessorEditor (NewProjectAudioProcessor&);
@@ -29,7 +27,7 @@ public:
     void resized() override;
     
     //==============================================================================
-    void sliderValueChanged (Slider* slider) override; //override the function in Slider::Listener
+    //void sliderValueChanged (Slider* slider) override; //override the function in Slider::Listener
 
 private:
     // This reference is provided as a quick way for your editor to
@@ -37,7 +35,14 @@ private:
     NewProjectAudioProcessor& audioProcessor;
     
     juce::Slider mGainSlider;
-    //juce::Label  mGainLabel;
+    //juce::Label mGainLabel;
+    
+    /*
+     When this object is deleted, the connection is broken. Make sure that your AudioProcessorValueTreeState and Slider aren't deleted before this object!
+     */
+    //the order of member variable deletion is from buttom-up.
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> mGainAttachment;
+    
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessorEditor)
 };
