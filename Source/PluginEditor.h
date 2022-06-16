@@ -35,7 +35,6 @@ private:
     juce::LookAndFeel_V4 otherLookAndFeel;
     
     juce::Slider mGainSlider;
-    //juce::Label mGainLabel;
     juce::ComboBox mMenu;
     
     /*
@@ -43,7 +42,7 @@ private:
      */
     //the order of member variable deletion is from buttom-up.
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> mGainAttachment;
-    
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> mMenuAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessorEditor)
 };

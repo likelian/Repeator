@@ -57,7 +57,21 @@ public:
     juce::AudioProcessorValueTreeState mAPVTS;
     
     //==============================================================================
+    enum selections {
+        none = 0,
+        silence,
+        beep,
+        TotalNumSelections
+    };
+    
+    //==============================================================================
     float mGain {1.0};
+    int mSelection;
+    
+    
+    
+    
+    
     
 
 private:

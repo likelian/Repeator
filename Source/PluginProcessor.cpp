@@ -145,6 +145,9 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     else
         mGain = pow(10., mGain/20.);
     
+    
+    mSelection = mAPVTS.getRawParameterValue("MENU")->load();
+
 
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
@@ -161,15 +164,32 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     // the samples and the outer loop is handling the channels.
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
+    
+    if(mSelection==silence)
     {
-        auto* channelData = buffer.getWritePointer(channel);
-
-        for (int i=0; i<buffer.getNumSamples(); i++)
+        for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {
-            channelData[i] *= mGain;
+            auto* channelData = buffer.getWritePointer(channel);
+
+            for (int i=0; i<buffer.getNumSamples(); i++)
+            {
+                channelData[i] = 0.;
+            }
         }
     }
+    else
+    {
+        for (int channel = 0; channel < totalNumInputChannels; ++channel)
+        {
+            auto* channelData = buffer.getWritePointer(channel);
+
+            for (int i=0; i<buffer.getNumSamples(); i++)
+            {
+                //dsp happens here
+            }
+        }
+    }
+    
 }
 
 //==============================================================================
@@ -213,7 +233,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::cr
     
     //add new parameters to params with push_back
     //AudioParameterFloat is a type of RangedAudioParameter
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("GAIN", "Gain", -30.0f, 12.0f, 0.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat> ("GAIN", "Gain", -30.0f, 12.0f, 0.0f));
+    
+    params.push_back(std::make_unique<juce::AudioParameterChoice> ("MENU", "Menu", StringArray("none", "silence", "beep", "more"), 0));
+    
     
     //vector::begin() function is a bidirectional iterator used to return an iterator pointing to the first element of the container.
     return {params.begin(), params.end()};

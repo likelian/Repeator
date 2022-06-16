@@ -31,15 +31,17 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
     mGainSlider.setValue(0.0);
     
     
+    
+    mMenuAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.mAPVTS, "MENU", mMenu);
+    
     addAndMakeVisible(mMenu);
-    mMenu.addItem("silence", 1);
-    mMenu.addItem("beep", 2);
-    mMenu.addItem("load...", 3);
+    mMenu.addItem("none", 1);
+    mMenu.addItem("silence", 2);
+    mMenu.addItem("beep", 3);
+    mMenu.addItem("load...", 4);
     
-    
-    
-   
 }
+
 
 NewProjectAudioProcessorEditor::~NewProjectAudioProcessorEditor()
 {
