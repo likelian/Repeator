@@ -19,17 +19,19 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
     
     mGainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.mAPVTS, "GAIN", mGainSlider);
     
-    
+    //the order of the following code matters
     addAndMakeVisible(mGainSlider);
     mGainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
-    mGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 300, 80);
+    getLookAndFeel().setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
+    mGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 70, 20);
     mGainSlider.setTextValueSuffix(" dB");
-    
-    mGainSlider.setNumDecimalPlacesToDisplay(0);
+    mGainSlider.setNumDecimalPlacesToDisplay(1);
     mGainSlider.setRange(-30.0, 12.0);
     mGainSlider.setValue(0.0);
-    //mGainSlider.addListener(this);
-
+    
+    
+    
+   
 }
 
 NewProjectAudioProcessorEditor::~NewProjectAudioProcessorEditor()
@@ -48,5 +50,5 @@ void NewProjectAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
-    mGainSlider.setBounds(300, 50, 30, 150);
+    mGainSlider.setBounds(300, 50, 70, 140);
 }
