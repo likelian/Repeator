@@ -32,6 +32,8 @@ private:
     // access the processor object that created it.
     NewProjectAudioProcessor& audioProcessor;
     
+    juce::LookAndFeel_V4 otherLookAndFeel;
+    
     juce::Slider mGainSlider;
     //juce::Label mGainLabel;
     

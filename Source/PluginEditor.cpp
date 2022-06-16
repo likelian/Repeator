@@ -22,15 +22,13 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
     //the order of the following code matters
     addAndMakeVisible(mGainSlider);
     mGainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
-    getLookAndFeel().setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
+    otherLookAndFeel.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
+    mGainSlider.setLookAndFeel(&otherLookAndFeel);
     mGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 70, 20);
     mGainSlider.setTextValueSuffix(" dB");
     mGainSlider.setNumDecimalPlacesToDisplay(1);
     mGainSlider.setRange(-30.0, 12.0);
     mGainSlider.setValue(0.0);
-    
-    
-    
    
 }
 
