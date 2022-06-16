@@ -29,6 +29,15 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
     mGainSlider.setNumDecimalPlacesToDisplay(1);
     mGainSlider.setRange(-30.0, 12.0);
     mGainSlider.setValue(0.0);
+    
+    
+    addAndMakeVisible(mMenu);
+    mMenu.addItem("silence", 1);
+    mMenu.addItem("beep", 2);
+    mMenu.addItem("load...", 3);
+    
+    
+    
    
 }
 
@@ -49,4 +58,5 @@ void NewProjectAudioProcessorEditor::resized()
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
     mGainSlider.setBounds(300, 50, 70, 140);
+    mMenu.setBounds(15, 75, 100, 25);
 }
