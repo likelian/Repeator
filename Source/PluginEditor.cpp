@@ -17,6 +17,8 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
     // editor's size to whatever you need it to be.
     setSize (400, 200);
     
+    //the order of the following code matters
+    
     mGainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.mAPVTS, "GAIN", mGainSlider);
     
     //the order of the following code matters
@@ -32,6 +34,28 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
     
     
     
+    mPeriodAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.mAPVTS, "PERIOD", mPeriodSlider);
+    
+    addAndMakeVisible(mPeriodSlider);
+    mPeriodSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    otherLookAndFeel.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
+    mPeriodSlider.setLookAndFeel(&otherLookAndFeel);
+    mPeriodSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 70, 20);
+    
+    
+    mPeriodSlider.setTextValueSuffix(" s");
+    mPeriodSlider.setNumDecimalPlacesToDisplay(0);
+    mPeriodSlider.setRange(0, 60, 1);
+    mPeriodSlider.setValue(15);
+    
+    addAndMakeVisible (mPeriodSLabel);
+    mPeriodSLabel.setFont (juce::Font (18.0f, juce::Font::bold));
+    mPeriodSLabel.setText ("Period", juce::dontSendNotification);
+    
+    
+    
+
+    
     mMenuAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.mAPVTS, "MENU", mMenu);
     
     addAndMakeVisible(mMenu);
@@ -39,8 +63,8 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
     mMenu.addItem("silence", 2);
     mMenu.addItem("beep", 3);
     mMenu.addItem("load...", 4);
-    
 }
+
 
 
 NewProjectAudioProcessorEditor::~NewProjectAudioProcessorEditor()
@@ -50,15 +74,18 @@ NewProjectAudioProcessorEditor::~NewProjectAudioProcessorEditor()
 //==============================================================================
 void NewProjectAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
-
+    
+    g.setFont (20);
+    g.setColour (juce::Colours::white);
+    g.drawText ("Repeator", 150, 0, 100, 50, juce::Justification::centred);
 }
+
 
 void NewProjectAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
-    mGainSlider.setBounds(300, 50, 70, 140);
-    mMenu.setBounds(15, 75, 100, 25);
+    mGainSlider.setBounds(300, 45, 70, 144);
+    mPeriodSlider.setBounds(125, 40, 150, 150);
+    mPeriodSLabel.setBounds(175, 92, 50, 20);
+    mMenu.setBounds(10, 90, 100, 25);
 }

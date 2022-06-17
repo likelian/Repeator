@@ -235,6 +235,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::cr
     //AudioParameterFloat is a type of RangedAudioParameter
     params.push_back(std::make_unique<juce::AudioParameterFloat> ("GAIN", "Gain", -30.0f, 12.0f, 0.0f));
     
+    params.push_back(std::make_unique<juce::AudioParameterInt> ("PERIOD", "Period", 0, 60, 15));
+    
     params.push_back(std::make_unique<juce::AudioParameterChoice> ("MENU", "Menu", StringArray("none", "silence", "beep", "more"), 0));
     
     
