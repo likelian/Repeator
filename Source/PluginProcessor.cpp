@@ -185,7 +185,7 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
 
             for (int i=0; i<buffer.getNumSamples(); i++)
             {
-                channelData[i] = mGain * (-0.1f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(0.2f))));;
+                channelData[i] += mGain * (-0.1f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(0.2f))));;
             }
         }
     }
