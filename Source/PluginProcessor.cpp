@@ -177,6 +177,18 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
             }
         }
     }
+    else if(mSelection==noise)
+    {
+        for (int channel = 0; channel < totalNumInputChannels; ++channel)
+        {
+            auto* channelData = buffer.getWritePointer(channel);
+
+            for (int i=0; i<buffer.getNumSamples(); i++)
+            {
+                channelData[i] = mGain * (-0.1f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(0.2f))));;
+            }
+        }
+    }
     else
     {
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
@@ -237,7 +249,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::cr
     
     params.push_back(std::make_unique<juce::AudioParameterInt> ("PERIOD", "Period", 0, 60, 15));
     
-    params.push_back(std::make_unique<juce::AudioParameterChoice> ("MENU", "Menu", StringArray("none", "silence", "beep", "more"), 0));
+    params.push_back(std::make_unique<juce::AudioParameterChoice> ("MENU", "Menu", StringArray("none", "silence", "beep", "noise", "more"), 0));
     
     
     //vector::begin() function is a bidirectional iterator used to return an iterator pointing to the first element of the container.

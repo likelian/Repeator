@@ -61,17 +61,13 @@ public:
         none = 0,
         silence,
         beep,
+        noise,
         TotalNumSelections
     };
     
     //==============================================================================
     float mGain {1.0};
     int mSelection;
-    
-    
-    
-    
-    
     
 
 private:

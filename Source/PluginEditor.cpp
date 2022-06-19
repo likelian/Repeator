@@ -62,7 +62,8 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
     mMenu.addItem("none", 1);
     mMenu.addItem("silence", 2);
     mMenu.addItem("beep", 3);
-    mMenu.addItem("load...", 4);
+    mMenu.addItem("noise", 4);
+    mMenu.addItem("load...", 5);
 }
 
 
