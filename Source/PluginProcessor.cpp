@@ -23,7 +23,10 @@ NewProjectAudioProcessor::NewProjectAudioProcessor()
                     //AudioProcessorValueTreeState does not have a default constructor
                     //“this” is the reference to the class we are in right now.
                     //We have to dereference the pointer with *.
-                    mAPVTS(*this, nullptr, "Parameters", createParameters())
+                    mAPVTS(*this,
+                           nullptr,
+                           "Parameters",
+                           createParameters())
 #endif
 {
 }
@@ -237,21 +240,18 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 }
 
 //==============================================================================
-//return ParameterLayout for AudioProcessorValueTreeState
-juce::AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::createParameters()
+//return ParameterLayout for AudioProcessorValueTreeState constructor
+AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::createParameters()
 {
-    //a list of RangedAudioParameter pointers
-    std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
+    AudioProcessorValueTreeState::ParameterLayout params;
     
-    //add new parameters to params with push_back
-    //AudioParameterFloat is a type of RangedAudioParameter
-    params.push_back(std::make_unique<juce::AudioParameterFloat> ("GAIN", "Gain", -30.0f, 12.0f, 0.0f));
+    params.add(std::make_unique<AudioParameterFloat> (ParameterID{ "GAIN", 1}, "Gain", -30.0f, 12.0f, 0.0f));
     
-    params.push_back(std::make_unique<juce::AudioParameterInt> ("PERIOD", "Period", 0, 60, 15));
-    
-    params.push_back(std::make_unique<juce::AudioParameterChoice> ("MENU", "Menu", StringArray("none", "silence", "beep", "noise", "more"), 0));
+    params.add(std::make_unique<AudioParameterInt> (ParameterID{"PERIOD", 1}, "Period", 0, 60, 15));
     
     
-    //vector::begin() function is a bidirectional iterator used to return an iterator pointing to the first element of the container.
-    return {params.begin(), params.end()};
+    params.add(std::make_unique<AudioParameterChoice> (ParameterID{"MENU", 1}, "Menu", StringArray("none", "silence", "beep", "noise", "more"), 0));
+    
+    
+    return params;
 }
