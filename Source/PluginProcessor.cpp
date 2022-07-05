@@ -102,6 +102,7 @@ void NewProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+    
 }
 
 void NewProjectAudioProcessor::releaseResources()
@@ -151,11 +152,6 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     
     mSelection = mAPVTS.getRawParameterValue("MENU")->load();
     
-    
-    //CHANGE!!!!!!!!!
-    //this is called everytime Period is changed, and start clock needs to reset somehow
-    mClock.setInterval(mAPVTS.getRawParameterValue("Period")->load());
-
 
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't

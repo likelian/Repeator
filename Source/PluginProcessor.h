@@ -10,7 +10,6 @@
 
 #include <JuceHeader.h>
 
-#include "ReTimer.h"
 
 //==============================================================================
 /**
@@ -56,10 +55,11 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
     
     
-    
-    
+    //==============================================================================
     //==============================================================================
     juce::AudioProcessorValueTreeState mAPVTS;
+    
+    
     
     //==============================================================================
     enum selections {
@@ -74,9 +74,7 @@ public:
     float mGain {1.0};
     int mSelection;
     
-    
     //==============================================================================
-    ReTimer mClock = ReTimer();
     
     
 
@@ -86,4 +84,6 @@ private:
     
     //==============================================================================
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
+    
+    
 };
