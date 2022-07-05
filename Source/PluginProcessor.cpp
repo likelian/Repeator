@@ -143,12 +143,19 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
     
+    
+    AudioPlayHead* PlayHead = getPlayHead();
+    Optional<juce::AudioPlayHead::PositionInfo> PositionInfo = PlayHead->getPosition();
+    Optional< double > timeInSeconds = PositionInfo->getTimeInSeconds();
+    
+
+
+    
     mGain = mAPVTS.getRawParameterValue("GAIN")->load();
     if(mGain < -29.9)
         mGain = 0.;
     else
         mGain = pow(10., mGain/20.);
-    
     
     mSelection = mAPVTS.getRawParameterValue("MENU")->load();
     
