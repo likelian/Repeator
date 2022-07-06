@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 
+
 //==============================================================================
 /**
 */
@@ -53,8 +54,12 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
     
+    
+    //==============================================================================
     //==============================================================================
     juce::AudioProcessorValueTreeState mAPVTS;
+    
+    
     
     //==============================================================================
     enum selections {
@@ -66,8 +71,16 @@ public:
     };
     
     //==============================================================================
+    float mPeriod = 15.f;
+    float mLastPos = 0.f;
+    float mCurrentPos = 0.f;
+    float mDuration = 1.f;
+    bool mIsPlay = false;
     float mGain {1.0};
     int mSelection;
+    
+    //==============================================================================
+    
     
 
 private:
@@ -76,4 +89,6 @@ private:
     
     //==============================================================================
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
+    
+    
 };

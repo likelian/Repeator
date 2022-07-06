@@ -45,7 +45,7 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
     
     mPeriodSlider.setTextValueSuffix(" s");
     mPeriodSlider.setNumDecimalPlacesToDisplay(0);
-    mPeriodSlider.setRange(0, 60, 1);
+    mPeriodSlider.setRange(1, 60, 1);
     mPeriodSlider.setValue(15);
     
     addAndMakeVisible (mPeriodSLabel);
