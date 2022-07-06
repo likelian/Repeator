@@ -6,7 +6,6 @@
               displaySplashScreen="1">
   <MAINGROUP id="I2nTFP" name="Repeator">
     <GROUP id="{FDC7DD20-6D5D-C827-5F7C-5528C1D06912}" name="Source">
-      <FILE id="vtM3PO" name="ReTimer.h" compile="0" resource="0" file="Source/ReTimer.h"/>
       <FILE id="WRzm3a" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="QGug47" name="PluginProcessor.h" compile="0" resource="0"

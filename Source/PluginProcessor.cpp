@@ -144,11 +144,36 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     auto totalNumOutputChannels = getTotalNumOutputChannels();
     
     
+    mPeriod = static_cast<float> (mAPVTS.getRawParameterValue("PERIOD")->load());
+    
     AudioPlayHead* PlayHead = getPlayHead();
     Optional<juce::AudioPlayHead::PositionInfo> PositionInfo = PlayHead->getPosition();
     Optional< double > timeInSeconds = PositionInfo->getTimeInSeconds();
     
-
+    //if the user changed the playback position
+    if (abs(mCurrentPos - static_cast<float>(std::move(*timeInSeconds))) > 1.f)
+    {
+        mLastPos = static_cast<float>(std::move(*timeInSeconds));
+        mCurrentPos = mLastPos;
+    }else{
+        mCurrentPos = static_cast<float>(std::move(*timeInSeconds));
+    }
+    
+    
+    if (mLastPos + mPeriod < mCurrentPos)
+    {
+        mIsPlay = true;
+        mLastPos = mCurrentPos;
+    }else if ((mCurrentPos - mLastPos) < mDuration)
+    {
+        mIsPlay = true;
+    }
+    else{
+        mIsPlay = false;
+    }
+    
+    
+    
 
     
     mGain = mAPVTS.getRawParameterValue("GAIN")->load();
@@ -176,7 +201,7 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
     
-    if(mSelection==silence)
+    if(mSelection==silence && mIsPlay==true)
     {
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {
@@ -188,7 +213,7 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
             }
         }
     }
-    else if(mSelection==noise)
+    else if(mSelection==noise && mIsPlay==true)
     {
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {

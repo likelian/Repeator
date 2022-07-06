@@ -71,6 +71,11 @@ public:
     };
     
     //==============================================================================
+    float mPeriod = 15.f;
+    float mLastPos = 0.f;
+    float mCurrentPos = 0.f;
+    float mDuration = 1.f;
+    bool mIsPlay = false;
     float mGain {1.0};
     int mSelection;
     
