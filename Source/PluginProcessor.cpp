@@ -288,3 +288,10 @@ AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::createPa
     
     return params;
 }
+
+
+void NewProjectAudioProcessor::loadFile()
+{
+    
+}
+

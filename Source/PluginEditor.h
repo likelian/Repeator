@@ -39,6 +39,8 @@ private:
     juce::Label  mPeriodSLabel;
     juce::ComboBox mMenu;
     
+    void MenuChanged();
+    
     /*
      When this object is deleted, the connection is broken. Make sure that your AudioProcessorValueTreeState and Slider aren't deleted before this object!
      */
@@ -47,7 +49,9 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> mPeriodAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> mMenuAttachment;
     
+    
     //==============================================================================
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessorEditor)
+    
 };
