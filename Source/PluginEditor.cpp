@@ -98,7 +98,7 @@ void NewProjectAudioProcessorEditor::MenuChanged()
 {
     switch (mMenu.getSelectedId())
             {
-                case 5: audioProcessor.loadFile(); break; // bring up the popup window //5 is the loading option
+                case 5: audioProcessor.loadFile(); break;
                 default: break;
             }
 }

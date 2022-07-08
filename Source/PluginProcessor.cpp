@@ -9,6 +9,8 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+
+
 //==============================================================================
 NewProjectAudioProcessor::NewProjectAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -29,10 +31,14 @@ NewProjectAudioProcessor::NewProjectAudioProcessor()
                            createParameters())
 #endif
 {
+    mFormatManager.registerBasicFormats();
 }
+
+
 
 NewProjectAudioProcessor::~NewProjectAudioProcessor()
 {
+    mFormatReader = nullptr;
 }
 
 //==============================================================================
@@ -293,5 +299,17 @@ AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::createPa
 void NewProjectAudioProcessor::loadFile()
 {
     
+    mChooser = std::make_unique<FileChooser> ("Please select the moose you want to load...");
+     
+    auto folderChooserFlags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectDirectories;
+     
+    mChooser->launchAsync (folderChooserFlags, [this] (const FileChooser& chooser)
+    {
+        auto file = chooser.getResult();
+     
+        mFormatReader = mFormatManager.createReaderFor(file);
+    });
+
+
 }
 

@@ -11,6 +11,8 @@
 #include <JuceHeader.h>
 
 
+
+
 //==============================================================================
 /**
 */
@@ -81,6 +83,9 @@ public:
     
     //==============================================================================
     void loadFile();
+    std::unique_ptr<FileChooser> mChooser;
+    juce::AudioFormatManager mFormatManager;
+    juce::AudioFormatReader* mFormatReader {nullptr}; //point to somewhere else when choose another file
     
 
 private:
