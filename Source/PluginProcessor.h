@@ -84,16 +84,16 @@ public:
     //==============================================================================
     void loadFile();
     std::unique_ptr<FileChooser> mChooser;
-    juce::AudioFormatManager mFormatManager;
-    juce::AudioFormatReader* mFormatReader {nullptr}; //point to somewhere else when choose another file
-    
+    AudioFormatManager mFormatManager;
+    AudioFormatReader* mFormatReader {nullptr}; //point to somewhere else when choose another file
+
 
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessor)
     
     //==============================================================================
-    juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
+    AudioProcessorValueTreeState::ParameterLayout createParameters();
     
     
 };

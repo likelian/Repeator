@@ -106,9 +106,6 @@ void NewProjectAudioProcessor::changeProgramName (int index, const juce::String&
 //==============================================================================
 void NewProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
-    
 }
 
 void NewProjectAudioProcessor::releaseResources()
@@ -231,17 +228,22 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
             }
         }
     }
-    else
+    else if(mSelection==load && mIsPlay==true && mFormatReader!=nullptr)
     {
+        
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {
             auto* channelData = buffer.getWritePointer(channel);
 
             for (int i=0; i<buffer.getNumSamples(); i++)
             {
-                //dsp happens here
+                //CHANGE!!!!!!!!!!!!!!
+                channelData[i] = 0.;
             }
         }
+    }
+    else
+    {
     }
     
 }
@@ -299,15 +301,28 @@ AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::createPa
 void NewProjectAudioProcessor::loadFile()
 {
     
-    mChooser = std::make_unique<FileChooser> ("Please select the moose you want to load...");
+    mChooser = std::make_unique<FileChooser> ("Please select the audio file you want to load...",
+                                              juce::File{},
+                                              "*.wav");
      
-    auto folderChooserFlags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectDirectories;
+    auto folderChooserFlags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
      
     mChooser->launchAsync (folderChooserFlags, [this] (const FileChooser& chooser)
     {
         auto file = chooser.getResult();
-     
         mFormatReader = mFormatManager.createReaderFor(file);
+        
+        if (mFormatReader)
+        {
+            AudioBuffer<float> audioBuffer(int(mFormatReader->numChannels), int(mFormatReader->lengthInSamples));
+            
+            mFormatReader->read(&audioBuffer, 0, int(mFormatReader->lengthInSamples), 0, false, false);
+            
+            
+        }
+        
+        
+        
     });
 
 
