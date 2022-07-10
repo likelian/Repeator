@@ -13,8 +13,6 @@
 NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
     setSize (400, 200);
     
     //the order of the following code matters
@@ -64,6 +62,10 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
     mMenu.addItem("beep", 3);
     mMenu.addItem("noise", 4);
     mMenu.addItem("load...", 5);
+    
+    
+    mMenu.onChange = [this] { MenuChanged(); };
+    
 }
 
 
@@ -89,4 +91,14 @@ void NewProjectAudioProcessorEditor::resized()
     mPeriodSlider.setBounds(125, 40, 150, 150);
     mPeriodSLabel.setBounds(175, 92, 50, 20);
     mMenu.setBounds(10, 90, 100, 25);
+}
+
+
+void NewProjectAudioProcessorEditor::MenuChanged()
+{
+    switch (mMenu.getSelectedId())
+            {
+                case 5: audioProcessor.loadFile(); break;
+                default: break;
+            }
 }

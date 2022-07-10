@@ -11,6 +11,8 @@
 #include <JuceHeader.h>
 
 
+
+
 //==============================================================================
 /**
 */
@@ -67,7 +69,7 @@ public:
         silence,
         beep,
         noise,
-        TotalNumSelections
+        load
     };
     
     //==============================================================================
@@ -80,15 +82,19 @@ public:
     int mSelection;
     
     //==============================================================================
-    
-    
+    void loadFile();
+    std::unique_ptr<FileChooser> mChooser;
+    AudioFormatManager mFormatManager;
+    AudioFormatReader* mFormatReader {nullptr}; //point to somewhere else when choose another file
+    AudioBuffer<float> mBuffer;
+
 
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessor)
     
     //==============================================================================
-    juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
+    AudioProcessorValueTreeState::ParameterLayout createParameters();
     
     
 };
