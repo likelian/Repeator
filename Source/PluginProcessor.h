@@ -86,6 +86,7 @@ public:
     std::unique_ptr<FileChooser> mChooser;
     AudioFormatManager mFormatManager;
     AudioFormatReader* mFormatReader {nullptr}; //point to somewhere else when choose another file
+    AudioBuffer<float> mBuffer;
 
 
 private:

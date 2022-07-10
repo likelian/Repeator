@@ -38,7 +38,7 @@ NewProjectAudioProcessor::NewProjectAudioProcessor()
 
 NewProjectAudioProcessor::~NewProjectAudioProcessor()
 {
-    mFormatReader = nullptr;
+    delete mFormatReader;
 }
 
 //==============================================================================
@@ -303,7 +303,7 @@ void NewProjectAudioProcessor::loadFile()
     
     mChooser = std::make_unique<FileChooser> ("Please select the audio file you want to load...",
                                               juce::File{},
-                                              "*.wav");
+                                              "*.aac;;*.aiff;;*.flac;;*.m4a;;*.mp3;;*.ogg;;*.wav;;*.wma");
      
     auto folderChooserFlags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
      
@@ -314,15 +314,12 @@ void NewProjectAudioProcessor::loadFile()
         
         if (mFormatReader)
         {
-            AudioBuffer<float> audioBuffer(int(mFormatReader->numChannels), int(mFormatReader->lengthInSamples));
+
+            mBuffer = AudioBuffer<float>(int(mFormatReader->numChannels), int(mFormatReader->lengthInSamples));
             
-            mFormatReader->read(&audioBuffer, 0, int(mFormatReader->lengthInSamples), 0, false, false);
-            
+            mFormatReader->read(&mBuffer, 0, int(mFormatReader->lengthInSamples), 0, false, false);
             
         }
-        
-        
-        
     });
 
 
