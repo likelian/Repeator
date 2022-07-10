@@ -228,7 +228,7 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
             }
         }
     }
-    else if(mSelection==load && mIsPlay==true && mFormatReader!=nullptr)
+    else if(mSelection==added && mIsPlay==true && mFormatReader!=nullptr)
     {
         
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
@@ -304,24 +304,34 @@ void NewProjectAudioProcessor::loadFile()
     mChooser = std::make_unique<FileChooser> ("Please select the audio file you want to load...",
                                               juce::File{},
                                               "*.aac;;*.aiff;;*.flac;;*.m4a;;*.mp3;;*.ogg;;*.wav;;*.wma");
-     
+
     auto folderChooserFlags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
-     
+
     mChooser->launchAsync (folderChooserFlags, [this] (const FileChooser& chooser)
     {
         auto file = chooser.getResult();
         mFormatReader = mFormatManager.createReaderFor(file);
-        
+
         if (mFormatReader)
         {
-
             mBuffer = AudioBuffer<float>(int(mFormatReader->numChannels), int(mFormatReader->lengthInSamples));
-            
+
             mFormatReader->read(&mBuffer, 0, int(mFormatReader->lengthInSamples), 0, false, false);
-            
         }
     });
-
-
 }
 
+
+void NewProjectAudioProcessor::loadFileWithName(const StringArray& files)
+{
+    File file(files[0]);
+    
+    mFormatReader = mFormatManager.createReaderFor(file);
+    
+    if (mFormatReader)
+    {
+        mBuffer = AudioBuffer<float>(int(mFormatReader->numChannels), int(mFormatReader->lengthInSamples));
+        
+        mFormatReader->read(&mBuffer, 0, int(mFormatReader->lengthInSamples), 0, false, false);
+    }
+}

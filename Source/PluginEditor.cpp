@@ -61,7 +61,8 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
     mMenu.addItem("silence", 2);
     mMenu.addItem("beep", 3);
     mMenu.addItem("noise", 4);
-    mMenu.addItem("load...", 5);
+    mMenu.addItem("new", 5);
+    mMenu.addItem("load...", 6);
     
     
     mMenu.onChange = [this] { MenuChanged(); };
@@ -98,7 +99,28 @@ void NewProjectAudioProcessorEditor::MenuChanged()
 {
     switch (mMenu.getSelectedId())
             {
-                case 5: audioProcessor.loadFile(); break;
+                case 6:
+                {
+                    audioProcessor.loadFile();
+                    
+//                    AudioProcessorParameterWithID* pParam = audioProcessor.mAPVTS.getParameter ("MENU");
+//                    pParam->beginChangeGesture();
+//                    pParam->setValueNotifyingHost(NewProjectAudioProcessor::added);
+//                    pParam->endChangeGesture();
+                    break;
+                }
                 default: break;
             }
+}
+
+
+void NewProjectAudioProcessorEditor::filesDropped(const StringArray& files, int, int)
+{
+    audioProcessor.loadFileWithName(files);
+    
+//    AudioProcessorParameterWithID* pParam = audioProcessor.mAPVTS.getParameter("MENU");
+//    pParam->beginChangeGesture();
+//    pParam->setValueNotifyingHost(1);
+//    pParam->endChangeGesture();
+    
 }
