@@ -15,8 +15,8 @@
 /**
 */
 class NewProjectAudioProcessorEditor  :
-public AudioProcessorEditor
-//public FileDragAndDropTarget
+public AudioProcessorEditor,
+public FileDragAndDropTarget
 {
 public:
     NewProjectAudioProcessorEditor (NewProjectAudioProcessor&);
@@ -25,6 +25,11 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
+    
+    //void filesDropped (const StringArray& files, int x, int y) override;
+    
+    bool isInterestedInFileDrag (const StringArray&) override  { return true; }
+    void filesDropped (const StringArray& files, int, int) override;
     
 
 private:
@@ -40,6 +45,7 @@ private:
     juce::ComboBox mMenu;
     
     void MenuChanged();
+    
     
     /*
      When this object is deleted, the connection is broken. Make sure that your AudioProcessorValueTreeState and Slider aren't deleted before this object!
