@@ -120,7 +120,7 @@ void NewProjectAudioProcessorEditor::filesDropped(const StringArray& files, int,
     
 //    AudioProcessorParameterWithID* pParam = audioProcessor.mAPVTS.getParameter("MENU");
 //    pParam->beginChangeGesture();
-//    pParam->setValueNotifyingHost(1);
+//    pParam->setValueNotifyingHost(NewProjectAudioProcessor::added);
 //    pParam->endChangeGesture();
     
 }
