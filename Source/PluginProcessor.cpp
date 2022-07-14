@@ -39,6 +39,8 @@ NewProjectAudioProcessor::NewProjectAudioProcessor()
 NewProjectAudioProcessor::~NewProjectAudioProcessor()
 {
     delete mFormatReader;
+    mBuffer.clear();
+    mBuffer.~AudioBuffer();
 }
 
 //==============================================================================
@@ -106,6 +108,7 @@ void NewProjectAudioProcessor::changeProgramName (int index, const juce::String&
 //==============================================================================
 void NewProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+    mBuffer = AudioBuffer<float>(getTotalNumInputChannels(), samplesPerBlock);
 }
 
 void NewProjectAudioProcessor::releaseResources()
@@ -185,7 +188,7 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     else
         mGain = pow(10., mGain/20.);
     
-    mSelection = mAPVTS.getRawParameterValue("MENU")->load();
+    
     
 
     // In case we have more outputs than inputs, this code clears any output
@@ -224,12 +227,15 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
 
             for (int i=0; i<buffer.getNumSamples(); i++)
             {
-                channelData[i] += mGain * (-0.1f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(0.2f))));;
+                channelData[i] += mGain * (-0.09f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(0.18f))));;
             }
         }
     }
-    else if(mSelection==added && mIsPlay==true && mFormatReader!=nullptr)
+    else if(mSelection==load && mIsPlay==true && mFormatReader!=nullptr)
     {
+        
+        //Need to counting the read point for each block
+        mFormatReader->read(&mBuffer, 0, int(buffer.getNumSamples()), 0, true, true);
         
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {
@@ -237,8 +243,7 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
 
             for (int i=0; i<buffer.getNumSamples(); i++)
             {
-                //CHANGE!!!!!!!!!!!!!!
-                channelData[i] = 0.;
+                channelData[i] = mGain * mBuffer.getSample(channel, i);
             }
         }
     }
@@ -312,12 +317,12 @@ void NewProjectAudioProcessor::loadFile()
         auto file = chooser.getResult();
         mFormatReader = mFormatManager.createReaderFor(file);
 
-        if (mFormatReader)
-        {
-            mBuffer = AudioBuffer<float>(int(mFormatReader->numChannels), int(mFormatReader->lengthInSamples));
-
-            mFormatReader->read(&mBuffer, 0, int(mFormatReader->lengthInSamples), 0, false, false);
-        }
+//        if (mFormatReader)
+//        {
+//            mBuffer = AudioBuffer<float>(int(mFormatReader->numChannels), int(mFormatReader->lengthInSamples));
+//
+//            mFormatReader->read(&mBuffer, 0, int(mFormatReader->lengthInSamples), 0, false, false);
+//        }
     });
 }
 
@@ -328,10 +333,10 @@ void NewProjectAudioProcessor::loadFileWithName(const StringArray& files)
     
     mFormatReader = mFormatManager.createReaderFor(file);
     
-    if (mFormatReader)
-    {
-        mBuffer = AudioBuffer<float>(int(mFormatReader->numChannels), int(mFormatReader->lengthInSamples));
-        
-        mFormatReader->read(&mBuffer, 0, int(mFormatReader->lengthInSamples), 0, false, false);
-    }
+//    if (mFormatReader)
+//    {
+//        mBuffer = AudioBuffer<float>(int(mFormatReader->numChannels), int(mFormatReader->lengthInSamples));
+//
+//        mFormatReader->read(&mBuffer, 0, int(mFormatReader->lengthInSamples), 0, false, false);
+//    }
 }

@@ -65,7 +65,8 @@ public:
     
     //==============================================================================
     enum selections {
-        none = 0,
+        empty = 0,
+        none,
         silence,
         beep,
         noise,
@@ -80,7 +81,7 @@ public:
     float mDuration = 1.f;
     bool mIsPlay = false;
     float mGain {1.0};
-    int mSelection;
+    int mSelection = 0;
     
     //==============================================================================
     void loadFile();

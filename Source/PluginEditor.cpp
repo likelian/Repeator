@@ -51,11 +51,9 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
     mPeriodSLabel.setText ("Period", juce::dontSendNotification);
     
     
+    //mMenuAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.mAPVTS, "MENU", mMenu);
     
 
-    
-    mMenuAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.mAPVTS, "MENU", mMenu);
-    
     addAndMakeVisible(mMenu);
     mMenu.addItem("none", 1);
     mMenu.addItem("silence", 2);
@@ -63,6 +61,7 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
     mMenu.addItem("noise", 4);
     mMenu.addItem("new", 5);
     mMenu.addItem("load...", 6);
+    
     
     
     mMenu.onChange = [this] { MenuChanged(); };
@@ -97,6 +96,8 @@ void NewProjectAudioProcessorEditor::resized()
 
 void NewProjectAudioProcessorEditor::MenuChanged()
 {
+    audioProcessor.mSelection = mMenu.getSelectedId();
+    
     switch (mMenu.getSelectedId())
             {
                 case 6:
