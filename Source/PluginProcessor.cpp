@@ -40,7 +40,6 @@ NewProjectAudioProcessor::~NewProjectAudioProcessor()
 {
     delete mFormatReader;
     mBuffer.clear();
-    mBuffer.~AudioBuffer();
 }
 
 //==============================================================================
@@ -234,8 +233,13 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     else if(mSelection==load && mIsPlay==true && mFormatReader!=nullptr)
     {
         
-        //Need to counting the read point for each block
-        mFormatReader->read(&mBuffer, 0, int(buffer.getNumSamples()), 0, true, true);
+        
+        mFormatReader->read(&mBuffer, 0, int(buffer.getNumSamples()), mPlayHead, false, false);
+        
+        mPlayHead += buffer.getNumSamples();
+        if (mPlayHead>=(mFormatReader->lengthInSamples - buffer.getNumSamples()))
+            mPlayHead = 0;
+        
         
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {
@@ -285,6 +289,10 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
     return new NewProjectAudioProcessor();
 }
 
+
+
+//==============================================================================
+//==============================================================================
 //==============================================================================
 //return ParameterLayout for AudioProcessorValueTreeState constructor
 AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::createParameters()
@@ -296,13 +304,11 @@ AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::createPa
     params.add(std::make_unique<AudioParameterInt> (ParameterID{"PERIOD", 1}, "Period", 0, 60, 15));
     
     
-    params.add(std::make_unique<AudioParameterChoice> (ParameterID{"MENU", 1}, "Menu", StringArray("none", "silence", "beep", "noise", "more"), 0));
-    
-    
     return params;
 }
 
 
+//==============================================================================
 void NewProjectAudioProcessor::loadFile()
 {
     
@@ -316,13 +322,7 @@ void NewProjectAudioProcessor::loadFile()
     {
         auto file = chooser.getResult();
         mFormatReader = mFormatManager.createReaderFor(file);
-
-//        if (mFormatReader)
-//        {
-//            mBuffer = AudioBuffer<float>(int(mFormatReader->numChannels), int(mFormatReader->lengthInSamples));
-//
-//            mFormatReader->read(&mBuffer, 0, int(mFormatReader->lengthInSamples), 0, false, false);
-//        }
+        mBuffer.clear();
     });
 }
 
@@ -331,12 +331,11 @@ void NewProjectAudioProcessor::loadFileWithName(const StringArray& files)
 {
     File file(files[0]);
     
-    mFormatReader = mFormatManager.createReaderFor(file);
     
-//    if (mFormatReader)
-//    {
-//        mBuffer = AudioBuffer<float>(int(mFormatReader->numChannels), int(mFormatReader->lengthInSamples));
-//
-//        mFormatReader->read(&mBuffer, 0, int(mFormatReader->lengthInSamples), 0, false, false);
-//    }
+    mFormatReader = mFormatManager.createReaderFor(file);
+    mBuffer.clear();
+    
 }
+
+
+//==============================================================================

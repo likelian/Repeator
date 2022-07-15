@@ -83,6 +83,9 @@ public:
     float mGain {1.0};
     int mSelection = 0;
     
+    //parameters for sample playback
+    int mPlayHead = 0;
+    
     //==============================================================================
     void loadFile();
     std::unique_ptr<FileChooser> mChooser;
