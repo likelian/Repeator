@@ -227,6 +227,7 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
             for (int i=0; i<buffer.getNumSamples(); i++)
             {
                 channelData[i] += mGain * (-0.09f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(0.18f))));;
+                
             }
         }
     }
