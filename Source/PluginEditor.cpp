@@ -96,11 +96,14 @@ void NewProjectAudioProcessorEditor::resized()
 
 void NewProjectAudioProcessorEditor::MenuChanged()
 {
+    
+    audioProcessor.mDuration = 1.f;
+    
     audioProcessor.mSelection = mMenu.getSelectedId();
     
     switch (mMenu.getSelectedId())
             {
-                case 6:
+                case NewProjectAudioProcessor::load:
                 {
                     audioProcessor.loadFile();
                     
