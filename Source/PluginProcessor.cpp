@@ -323,7 +323,12 @@ void NewProjectAudioProcessor::loadFile()
     {
         auto file = chooser.getResult();
         mFormatReader = mFormatManager.createReaderFor(file);
-        mBuffer.clear();
+        if(mFormatReader!=nullptr)
+        {
+            mDuration = mFormatReader->lengthInSamples / mFormatReader->sampleRate;
+            mBuffer.clear();
+        }
+        
     });
 }
 
@@ -334,7 +339,12 @@ void NewProjectAudioProcessor::loadFileWithName(const StringArray& files)
     
     
     mFormatReader = mFormatManager.createReaderFor(file);
-    mBuffer.clear();
+    
+    if(mFormatReader!=nullptr)
+    {
+        mDuration = mFormatReader->lengthInSamples / mFormatReader->sampleRate;
+        mBuffer.clear();
+    }
     
 }
 
