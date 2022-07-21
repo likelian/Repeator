@@ -95,6 +95,14 @@ public:
     AudioBuffer<float> mBuffer;
     
     void loadFileWithName(const StringArray& files);
+    
+    
+    //==============================================================================
+    void reSample();
+    AudioBuffer<float> mAudioBuffer;
+    AudioFormatReaderSource* mReaderSource;
+    ResamplingAudioSource* mResamplingSource;
+    
 
 
 private:

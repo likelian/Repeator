@@ -344,6 +344,12 @@ void NewProjectAudioProcessor::loadFileWithName(const StringArray& files)
     {
         mSelection = load;
         mDuration = mFormatReader->lengthInSamples / mFormatReader->sampleRate;
+        
+        if(mFormatReader->sampleRate != getSampleRate())
+        {
+            reSample();
+        }
+        
         mBuffer.clear();
     }
     
@@ -351,3 +357,32 @@ void NewProjectAudioProcessor::loadFileWithName(const StringArray& files)
 
 
 //==============================================================================
+void NewProjectAudioProcessor::reSample()
+{
+    double reSampleRatio = getSampleRate() / mFormatReader->sampleRate;
+    
+    int newLengthInSamples = juce::roundToInt(mFormatReader->lengthInSamples / reSampleRatio);
+    
+    AudioFormatReaderSource tempReaderSource(mFormatReader, false);
+    mReaderSource = &tempReaderSource;
+    
+    ResamplingAudioSource tempResamplingSource(mReaderSource, false, mFormatReader->numChannels);
+    mResamplingSource = &tempResamplingSource;
+
+    mResamplingSource->setResamplingRatio (reSampleRatio);
+    mResamplingSource->prepareToPlay (newLengthInSamples, getSampleRate());
+
+    mAudioBuffer.setSize(mFormatReader->numChannels, newLengthInSamples);
+    juce::AudioSourceChannelInfo info;
+    info.startSample = 0;
+    info.numSamples = newLengthInSamples;
+    info.buffer = &mAudioBuffer;
+
+    mResamplingSource->getNextAudioBlock (info);
+
+    
+    
+}
+
+
+
