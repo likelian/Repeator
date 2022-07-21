@@ -85,6 +85,7 @@ public:
     
     //parameters for sample playback
     int mPlayHead = 0;
+    float mBlockInSec = 0.f;
     
     //==============================================================================
     void loadFile();

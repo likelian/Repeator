@@ -108,6 +108,7 @@ void NewProjectAudioProcessor::changeProgramName (int index, const juce::String&
 void NewProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     mBuffer = AudioBuffer<float>(getTotalNumInputChannels(), samplesPerBlock);
+    mBlockInSec = samplesPerBlock / sampleRate;
 }
 
 void NewProjectAudioProcessor::releaseResources()
@@ -169,17 +170,18 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     {
         mIsPlay = true;
         mLastPos = mCurrentPos;
-    }else if ((mCurrentPos - mLastPos) < mDuration)
+        mPlayHead = 0;
+    }
+    else if ((mCurrentPos - mLastPos) < mDuration && mLastPos > 0.0001)
     {
         mIsPlay = true;
     }
-    else{
+    else
+    {
         mIsPlay = false;
     }
     
     
-    
-
     
     mGain = mAPVTS.getRawParameterValue("GAIN")->load();
     if(mGain < -29.9)
@@ -234,12 +236,11 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     else if(mSelection==load && mIsPlay==true && mFormatReader!=nullptr)
     {
         
+        mBuffer.clear();
         
         mFormatReader->read(&mBuffer, 0, int(buffer.getNumSamples()), mPlayHead, false, false);
         
         mPlayHead += buffer.getNumSamples();
-        if (mPlayHead>=(mFormatReader->lengthInSamples - buffer.getNumSamples()))
-            mPlayHead = 0;
         
         
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
@@ -337,11 +338,11 @@ void NewProjectAudioProcessor::loadFileWithName(const StringArray& files)
 {
     File file(files[0]);
     
-    
     mFormatReader = mFormatManager.createReaderFor(file);
     
     if(mFormatReader!=nullptr)
     {
+        mSelection = load;
         mDuration = mFormatReader->lengthInSamples / mFormatReader->sampleRate;
         mBuffer.clear();
     }
