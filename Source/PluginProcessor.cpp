@@ -327,6 +327,15 @@ void NewProjectAudioProcessor::loadFile()
         if(mFormatReader!=nullptr)
         {
             mDuration = mFormatReader->lengthInSamples / mFormatReader->sampleRate;
+            
+            if(mFormatReader->sampleRate != getSampleRate())
+            {
+                reSample();
+            }
+            else{
+                mIsResampled = false;
+            }
+            
             mBuffer.clear();
         }
         
@@ -345,9 +354,13 @@ void NewProjectAudioProcessor::loadFileWithName(const StringArray& files)
         mSelection = load;
         mDuration = mFormatReader->lengthInSamples / mFormatReader->sampleRate;
         
+        
         if(mFormatReader->sampleRate != getSampleRate())
         {
             reSample();
+        }
+        else{
+            mIsResampled = false;
         }
         
         mBuffer.clear();
@@ -359,9 +372,11 @@ void NewProjectAudioProcessor::loadFileWithName(const StringArray& files)
 //==============================================================================
 void NewProjectAudioProcessor::reSample()
 {
-    double reSampleRatio = getSampleRate() / mFormatReader->sampleRate;
+    double reSampleRatio = mFormatReader->sampleRate / getSampleRate();
     
-    int newLengthInSamples = juce::roundToInt(mFormatReader->lengthInSamples / reSampleRatio);
+    int newLengthInSamples = juce::roundToInt(mFormatReader->lengthInSamples / reSampleRatio + 1);
+    
+    mIsResampled = true;
     
     AudioFormatReaderSource tempReaderSource(mFormatReader, false);
     mReaderSource = &tempReaderSource;
@@ -371,16 +386,18 @@ void NewProjectAudioProcessor::reSample()
 
     mResamplingSource->setResamplingRatio (reSampleRatio);
     mResamplingSource->prepareToPlay (newLengthInSamples, getSampleRate());
+    
+    mAudioBuffer.clear();
 
     mAudioBuffer.setSize(mFormatReader->numChannels, newLengthInSamples);
-    juce::AudioSourceChannelInfo info;
-    info.startSample = 0;
-    info.numSamples = newLengthInSamples;
-    info.buffer = &mAudioBuffer;
+    AudioSourceChannelInfo info(&mAudioBuffer, 0, newLengthInSamples);
 
-    mResamplingSource->getNextAudioBlock (info);
-
+    mResamplingSource->getNextAudioBlock(info);
     
+    mResamplingSource->releaseResources();
+    
+    mReaderSource = nullptr;
+    mResamplingSource = nullptr;
     
 }
 

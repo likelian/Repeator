@@ -100,8 +100,9 @@ public:
     //==============================================================================
     void reSample();
     AudioBuffer<float> mAudioBuffer;
-    AudioFormatReaderSource* mReaderSource;
-    ResamplingAudioSource* mResamplingSource;
+    AudioFormatReaderSource* mReaderSource = nullptr;
+    ResamplingAudioSource* mResamplingSource = nullptr;
+    bool mIsResampled = false;
     
 
 
