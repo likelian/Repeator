@@ -10,18 +10,19 @@
 
 #include <JuceHeader.h>
 
+#include "PresetManager.h"
 
 
 
 //==============================================================================
 /**
 */
-class NewProjectAudioProcessor  : public juce::AudioProcessor
+class RepeatorAudioProcessor  : public juce::AudioProcessor
 {
 public:
     //==============================================================================
-    NewProjectAudioProcessor();
-    ~NewProjectAudioProcessor() override;
+    RepeatorAudioProcessor();
+    ~RepeatorAudioProcessor() override;
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -95,6 +96,15 @@ public:
     
     void loadFileWithName(const StringArray& files);
     
+    //==============================================================================
+    PresetManager* getPresetManager();
+    
+    
+
+private:
+    //==============================================================================
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RepeatorAudioProcessor)
+    
     
     //==============================================================================
     void reSample();
@@ -103,14 +113,10 @@ public:
     ResamplingAudioSource* mResamplingSource = nullptr;
     bool mIsResampled = false;
     
-
-
-private:
-    //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessor)
-    
     //==============================================================================
     AudioProcessorValueTreeState::ParameterLayout createParameters();
+    
+    std::unique_ptr<PresetManager> mPresetManager;
     
     
 };
