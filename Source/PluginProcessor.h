@@ -88,6 +88,8 @@ public:
     int mPlayHead = 0;
     float mBlockInSec = 0.f;
     
+    String mFileName;
+    
     //==============================================================================
     void loadFile();
     std::unique_ptr<FileChooser> mChooser;

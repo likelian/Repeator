@@ -339,9 +339,12 @@ void RepeatorAudioProcessor::loadFile()
     mChooser->launchAsync (folderChooserFlags, [this] (const FileChooser& chooser)
     {
         auto file = chooser.getResult();
+        mFormatReader = nullptr;
         mFormatReader = mFormatManager.createReaderFor(file);
         if(mFormatReader!=nullptr)
         {
+            mFileName = file.getFileName();
+            
             mDuration = mFormatReader->lengthInSamples / mFormatReader->sampleRate;
             
             if(mFormatReader->sampleRate != getSampleRate())
@@ -366,13 +369,14 @@ void RepeatorAudioProcessor::loadFileWithName(const StringArray& files)
 {
     File file(files[0]);
     
+    mFormatReader = nullptr;
     mFormatReader = mFormatManager.createReaderFor(file);
-    
     if(mFormatReader!=nullptr)
     {
+        mFileName = file.getFileName();
+        
         mSelection = load;
         mDuration = mFormatReader->lengthInSamples / mFormatReader->sampleRate;
-        
         
         if(mFormatReader->sampleRate != getSampleRate())
         {
@@ -387,6 +391,8 @@ void RepeatorAudioProcessor::loadFileWithName(const StringArray& files)
             mAudioBuffer.setSize(getTotalNumInputChannels(), newLengthInSamples);
             mFormatReader->read(&mAudioBuffer, 0, newLengthInSamples-4096, mPlayHead, false, false);
         }
+        
+        
     }
 }
 

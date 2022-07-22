@@ -100,6 +100,15 @@ void RepeatorAudioProcessorEditor::MenuChanged()
                 case RepeatorAudioProcessor::load:
                 {
                     audioProcessor.loadFile();
+                    
+                    if(audioProcessor.mFormatReader!=nullptr)
+                    {
+                        mMenu.addItem(audioProcessor.mFileName, 7);
+                        mMenu.setSelectedId(7);
+                        //add new name to std::list (replacing enum mSelections)
+                        //change mSelection to new item
+                    }
+                    
                     break;
                 }
                 default: break;
@@ -110,4 +119,12 @@ void RepeatorAudioProcessorEditor::MenuChanged()
 void RepeatorAudioProcessorEditor::filesDropped(const StringArray& files, int, int)
 {
     audioProcessor.loadFileWithName(files);
+    
+    if(audioProcessor.mFormatReader!=nullptr)
+    {
+        mMenu.addItem(audioProcessor.mFileName, 8);
+        mMenu.setSelectedId(8);
+        //add new name to std::list (replacing enum mSelections)
+        //change mSelection to new item
+    }
 }
