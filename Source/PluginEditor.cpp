@@ -10,16 +10,16 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioProcessor& p)
+RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
     setSize (400, 200);
     
     //the order of the following code matters
     
+    //==============================================================================
     mGainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.mAPVTS, "GAIN", mGainSlider);
     
-    //the order of the following code matters
     addAndMakeVisible(mGainSlider);
     mGainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
     otherLookAndFeel.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
@@ -28,10 +28,9 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
     mGainSlider.setTextValueSuffix(" dB");
     mGainSlider.setNumDecimalPlacesToDisplay(1);
     mGainSlider.setRange(-30.0, 12.0);
-    mGainSlider.setValue(0.0);
+
     
-    
-    
+    //==============================================================================
     mPeriodAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.mAPVTS, "PERIOD", mPeriodSlider);
     
     addAndMakeVisible(mPeriodSlider);
@@ -40,20 +39,15 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
     mPeriodSlider.setLookAndFeel(&otherLookAndFeel);
     mPeriodSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 70, 20);
     
-    
     mPeriodSlider.setTextValueSuffix(" s");
     mPeriodSlider.setNumDecimalPlacesToDisplay(0);
     mPeriodSlider.setRange(1, 60, 1);
-    mPeriodSlider.setValue(15);
-    
+
     addAndMakeVisible (mPeriodSLabel);
     mPeriodSLabel.setFont (juce::Font (18.0f, juce::Font::bold));
     mPeriodSLabel.setText ("Period", juce::dontSendNotification);
-    
-    
-    //mMenuAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.mAPVTS, "MENU", mMenu);
-    
 
+    //==============================================================================
     addAndMakeVisible(mMenu);
     mMenu.addItem("none", 1);
     mMenu.addItem("silence", 2);
@@ -62,7 +56,7 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
     mMenu.addItem("new", 5);
     mMenu.addItem("load...", 6);
     
-    
+    mMenu.setSelectedId(audioProcessor.mSelection);
     
     mMenu.onChange = [this] { MenuChanged(); };
     
@@ -70,12 +64,12 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
 
 
 
-NewProjectAudioProcessorEditor::~NewProjectAudioProcessorEditor()
+RepeatorAudioProcessorEditor::~RepeatorAudioProcessorEditor()
 {
 }
 
 //==============================================================================
-void NewProjectAudioProcessorEditor::paint (juce::Graphics& g)
+void RepeatorAudioProcessorEditor::paint (juce::Graphics& g)
 {
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
     
@@ -85,7 +79,7 @@ void NewProjectAudioProcessorEditor::paint (juce::Graphics& g)
 }
 
 
-void NewProjectAudioProcessorEditor::resized()
+void RepeatorAudioProcessorEditor::resized()
 {
     mGainSlider.setBounds(300, 45, 70, 144);
     mPeriodSlider.setBounds(125, 40, 150, 150);
@@ -94,7 +88,7 @@ void NewProjectAudioProcessorEditor::resized()
 }
 
 
-void NewProjectAudioProcessorEditor::MenuChanged()
+void RepeatorAudioProcessorEditor::MenuChanged()
 {
     
     audioProcessor.mDuration = 1.f;
@@ -103,14 +97,9 @@ void NewProjectAudioProcessorEditor::MenuChanged()
     
     switch (mMenu.getSelectedId())
             {
-                case NewProjectAudioProcessor::load:
+                case RepeatorAudioProcessor::load:
                 {
                     audioProcessor.loadFile();
-                    
-//                    AudioProcessorParameterWithID* pParam = audioProcessor.mAPVTS.getParameter ("MENU");
-//                    pParam->beginChangeGesture();
-//                    pParam->setValueNotifyingHost(NewProjectAudioProcessor::added);
-//                    pParam->endChangeGesture();
                     break;
                 }
                 default: break;
@@ -118,13 +107,7 @@ void NewProjectAudioProcessorEditor::MenuChanged()
 }
 
 
-void NewProjectAudioProcessorEditor::filesDropped(const StringArray& files, int, int)
+void RepeatorAudioProcessorEditor::filesDropped(const StringArray& files, int, int)
 {
     audioProcessor.loadFileWithName(files);
-    
-//    AudioProcessorParameterWithID* pParam = audioProcessor.mAPVTS.getParameter("MENU");
-//    pParam->beginChangeGesture();
-//    pParam->setValueNotifyingHost(NewProjectAudioProcessor::added);
-//    pParam->endChangeGesture();
-    
 }

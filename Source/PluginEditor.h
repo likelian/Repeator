@@ -14,13 +14,13 @@
 //==============================================================================
 /**
 */
-class NewProjectAudioProcessorEditor  :
+class RepeatorAudioProcessorEditor  :
 public AudioProcessorEditor,
 public FileDragAndDropTarget
 {
 public:
-    NewProjectAudioProcessorEditor (NewProjectAudioProcessor&);
-    ~NewProjectAudioProcessorEditor() override;
+    RepeatorAudioProcessorEditor (RepeatorAudioProcessor&);
+    ~RepeatorAudioProcessorEditor() override;
 
     //==============================================================================
     void paint (juce::Graphics&) override;
@@ -35,7 +35,7 @@ public:
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
-    NewProjectAudioProcessor& audioProcessor;
+    RepeatorAudioProcessor& audioProcessor;
     
     juce::LookAndFeel_V4 otherLookAndFeel;
     
@@ -58,6 +58,6 @@ private:
     
     //==============================================================================
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RepeatorAudioProcessorEditor)
     
 };

@@ -12,7 +12,7 @@
 
 
 //==============================================================================
-NewProjectAudioProcessor::NewProjectAudioProcessor()
+RepeatorAudioProcessor::RepeatorAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
@@ -32,23 +32,24 @@ NewProjectAudioProcessor::NewProjectAudioProcessor()
 #endif
 {
     mFormatManager.registerBasicFormats();
+    mPresetManager = std::make_unique<PresetManager>(this);
 }
 
 
 
-NewProjectAudioProcessor::~NewProjectAudioProcessor()
+RepeatorAudioProcessor::~RepeatorAudioProcessor()
 {
     delete mFormatReader;
     mAudioBuffer.clear();
 }
 
 //==============================================================================
-const juce::String NewProjectAudioProcessor::getName() const
+const juce::String RepeatorAudioProcessor::getName() const
 {
     return JucePlugin_Name;
 }
 
-bool NewProjectAudioProcessor::acceptsMidi() const
+bool RepeatorAudioProcessor::acceptsMidi() const
 {
    #if JucePlugin_WantsMidiInput
     return true;
@@ -57,7 +58,7 @@ bool NewProjectAudioProcessor::acceptsMidi() const
    #endif
 }
 
-bool NewProjectAudioProcessor::producesMidi() const
+bool RepeatorAudioProcessor::producesMidi() const
 {
    #if JucePlugin_ProducesMidiOutput
     return true;
@@ -66,7 +67,7 @@ bool NewProjectAudioProcessor::producesMidi() const
    #endif
 }
 
-bool NewProjectAudioProcessor::isMidiEffect() const
+bool RepeatorAudioProcessor::isMidiEffect() const
 {
    #if JucePlugin_IsMidiEffect
     return true;
@@ -75,49 +76,49 @@ bool NewProjectAudioProcessor::isMidiEffect() const
    #endif
 }
 
-double NewProjectAudioProcessor::getTailLengthSeconds() const
+double RepeatorAudioProcessor::getTailLengthSeconds() const
 {
     return 0.0;
 }
 
-int NewProjectAudioProcessor::getNumPrograms()
+int RepeatorAudioProcessor::getNumPrograms()
 {
     return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
-int NewProjectAudioProcessor::getCurrentProgram()
+int RepeatorAudioProcessor::getCurrentProgram()
 {
     return 0;
 }
 
-void NewProjectAudioProcessor::setCurrentProgram (int index)
+void RepeatorAudioProcessor::setCurrentProgram (int index)
 {
 }
 
-const juce::String NewProjectAudioProcessor::getProgramName (int index)
+const juce::String RepeatorAudioProcessor::getProgramName (int index)
 {
     return {};
 }
 
-void NewProjectAudioProcessor::changeProgramName (int index, const juce::String& newName)
+void RepeatorAudioProcessor::changeProgramName (int index, const juce::String& newName)
 {
 }
 
 //==============================================================================
-void NewProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void RepeatorAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     mBlockInSec = samplesPerBlock / sampleRate;
 }
 
-void NewProjectAudioProcessor::releaseResources()
+void RepeatorAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-bool NewProjectAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool RepeatorAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
   #if JucePlugin_IsMidiEffect
     juce::ignoreUnused (layouts);
@@ -142,7 +143,7 @@ bool NewProjectAudioProcessor::isBusesLayoutSupported (const BusesLayout& layout
 }
 #endif
 
-void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
+void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
@@ -259,35 +260,51 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
 }
 
 //==============================================================================
-bool NewProjectAudioProcessor::hasEditor() const
+bool RepeatorAudioProcessor::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)
 }
 
-juce::AudioProcessorEditor* NewProjectAudioProcessor::createEditor()
+juce::AudioProcessorEditor* RepeatorAudioProcessor::createEditor()
 {
-    return new NewProjectAudioProcessorEditor (*this);
+    return new RepeatorAudioProcessorEditor (*this);
 }
 
 //==============================================================================
-void NewProjectAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
+void RepeatorAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
+    XmlElement preset(("Repeator_StateInfo"));
+    XmlElement* presetBody = new XmlElement("Repeator_Preset");
+        
+    mPresetManager->getXmlForPreset(presetBody);
+        
+    preset.addChildElement(presetBody);
+    copyXmlToBinary (preset, destData);
 }
 
-void NewProjectAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+void RepeatorAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+    const auto xmlState = getXmlFromBinary(data, sizeInBytes);
+        
+    jassert (xmlState.get() != nullptr);
+        
+    for(auto* subchild : xmlState->getChildIterator())
+    {
+        mPresetManager->loadPresetForXml(subchild);
+    }
+
 }
 
 //==============================================================================
 // This creates new instances of the plugin..
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new NewProjectAudioProcessor();
+    return new RepeatorAudioProcessor();
 }
 
 
@@ -296,7 +313,7 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 //==============================================================================
 //==============================================================================
 //return ParameterLayout for AudioProcessorValueTreeState constructor
-AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::createParameters()
+AudioProcessorValueTreeState::ParameterLayout RepeatorAudioProcessor::createParameters()
 {
     AudioProcessorValueTreeState::ParameterLayout params;
     
@@ -310,7 +327,7 @@ AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::createPa
 
 
 //==============================================================================
-void NewProjectAudioProcessor::loadFile()
+void RepeatorAudioProcessor::loadFile()
 {
     
     mChooser = std::make_unique<FileChooser> ("Please select the audio file you want to load...",
@@ -345,7 +362,7 @@ void NewProjectAudioProcessor::loadFile()
 }
 
 
-void NewProjectAudioProcessor::loadFileWithName(const StringArray& files)
+void RepeatorAudioProcessor::loadFileWithName(const StringArray& files)
 {
     File file(files[0]);
     
@@ -375,7 +392,7 @@ void NewProjectAudioProcessor::loadFileWithName(const StringArray& files)
 
 
 //==============================================================================
-void NewProjectAudioProcessor::reSample()
+void RepeatorAudioProcessor::reSample()
 {
     double reSampleRatio = mFormatReader->sampleRate / getSampleRate();
     
