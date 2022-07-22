@@ -39,7 +39,6 @@ NewProjectAudioProcessor::NewProjectAudioProcessor()
 NewProjectAudioProcessor::~NewProjectAudioProcessor()
 {
     delete mFormatReader;
-    mBuffer.clear();
     mAudioBuffer.clear();
 }
 
@@ -108,7 +107,6 @@ void NewProjectAudioProcessor::changeProgramName (int index, const juce::String&
 //==============================================================================
 void NewProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    mBuffer = AudioBuffer<float>(getTotalNumInputChannels(), samplesPerBlock);
     mBlockInSec = samplesPerBlock / sampleRate;
 }
 
@@ -237,12 +235,7 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     else if(mSelection==load && mIsPlay==true && mFormatReader!=nullptr)
     {
         
-        mBuffer.clear();
-        
-        mFormatReader->read(&mBuffer, 0, int(buffer.getNumSamples()), mPlayHead, false, false);
-        
-        
-        
+
         mPlayHead += buffer.getNumSamples();
         
         
@@ -347,14 +340,7 @@ void NewProjectAudioProcessor::loadFile()
                 mAudioBuffer.setSize(getTotalNumInputChannels(), newLengthInSamples);
                 mFormatReader->read(&mAudioBuffer, 0, newLengthInSamples-4096, mPlayHead, false, false);
             }
-            
-            mBuffer.clear();
-            
-            
-            
-           
         }
-        
     });
 }
 
@@ -384,10 +370,7 @@ void NewProjectAudioProcessor::loadFileWithName(const StringArray& files)
             mAudioBuffer.setSize(getTotalNumInputChannels(), newLengthInSamples);
             mFormatReader->read(&mAudioBuffer, 0, newLengthInSamples-4096, mPlayHead, false, false);
         }
-        
-        mBuffer.clear();
     }
-    
 }
 
 
