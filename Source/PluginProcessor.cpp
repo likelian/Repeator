@@ -338,13 +338,14 @@ void NewProjectAudioProcessor::loadFile()
             {
                 reSample();
             }
-            else{
+            else
+            {
                 mIsResampled = false;
+                int newLengthInSamples = juce::roundToInt(mFormatReader->lengthInSamples) + 4096;
                 
-                //mAudioBuffer.clear();
-                
-                //mAudioBuffer.setSize(, mFormatReader->lengthInSamples + 4096);
-                
+                mAudioBuffer.clear();
+                mAudioBuffer.setSize(getTotalNumInputChannels(), newLengthInSamples);
+                mFormatReader->read(&mAudioBuffer, 0, newLengthInSamples-4096, mPlayHead, false, false);
             }
             
             mBuffer.clear();
@@ -374,8 +375,14 @@ void NewProjectAudioProcessor::loadFileWithName(const StringArray& files)
         {
             reSample();
         }
-        else{
+        else
+        {
             mIsResampled = false;
+            int newLengthInSamples = juce::roundToInt(mFormatReader->lengthInSamples) + 4096;
+            
+            mAudioBuffer.clear();
+            mAudioBuffer.setSize(getTotalNumInputChannels(), newLengthInSamples);
+            mFormatReader->read(&mAudioBuffer, 0, newLengthInSamples-4096, mPlayHead, false, false);
         }
         
         mBuffer.clear();
@@ -411,9 +418,7 @@ void NewProjectAudioProcessor::reSample()
     AudioSourceChannelInfo info(&mAudioBuffer, 0, newLengthInSamples);
 
     mResamplingSource->getNextAudioBlock(info);
-    
 
-    
     mResamplingSource->releaseResources();
     
     mReaderSource = nullptr;
