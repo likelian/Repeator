@@ -33,6 +33,14 @@ RepeatorAudioProcessor::RepeatorAudioProcessor()
 {
     mFormatManager.registerBasicFormats();
     mPresetManager = std::make_unique<PresetManager>(this);
+    
+    mArrSelect.add("empty");
+    mArrSelect.add("none");
+    mArrSelect.add("silence");
+    mArrSelect.add("beep");
+    mArrSelect.add("noise");
+    mArrSelect.add("added");
+    mArrSelect.add("load");
 }
 
 
@@ -246,8 +254,6 @@ void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
 
             for (int i=0; i<buffer.getNumSamples(); i++)
             {
-                //channelData[i] = mGain * mBuffer.getSample(channel, i);
-                
                 channelData[i] = mGain * 
                 mAudioBuffer.getSample(channel, i+mPlayHead);
             }

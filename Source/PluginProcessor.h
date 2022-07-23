@@ -9,6 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include <map>
 
 #include "PresetManager.h"
 
@@ -75,6 +76,8 @@ public:
         load
     };
     
+    
+    
     //==============================================================================
     float mPeriod = 15.f;
     float mLastPos = 0.f;
@@ -97,6 +100,8 @@ public:
     AudioFormatReader* mFormatReader {nullptr}; //point to somewhere else when choose another file
     
     void loadFileWithName(const StringArray& files);
+    
+    StringArray mArrSelect;
     
     //==============================================================================
     PresetManager* getPresetManager();
