@@ -66,15 +66,15 @@ public:
     
     
     //==============================================================================
-    enum selections {
-        empty = 0,
-        none,
-        silence,
-        beep,
-        noise,
-        added,
-        load
-    };
+//    enum selections {
+//        empty = 0,
+//        none,
+//        silence,
+//        beep,
+//        noise,
+//        added,
+//        load
+//    };
     
     
     

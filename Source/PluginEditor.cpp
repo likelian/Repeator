@@ -49,12 +49,14 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
 
     //==============================================================================
     addAndMakeVisible(mMenu);
-    mMenu.addItem("none", 1);
-    mMenu.addItem("silence", 2);
-    mMenu.addItem("beep", 3);
-    mMenu.addItem("noise", 4);
-    mMenu.addItem("new", 5);
-    mMenu.addItem("load...", 6);
+    mMenu.addItemList(audioProcessor.mArrSelect, 1);
+    
+//    mMenu.addItem("none", 1);
+//    mMenu.addItem("silence", 2);
+//    mMenu.addItem("beep", 3);
+//    mMenu.addItem("noise", 4);
+//    mMenu.addItem("new", 5);
+//    mMenu.addItem("load...", 6);
     
     mMenu.setSelectedId(audioProcessor.mSelection);
     
@@ -93,43 +95,35 @@ void RepeatorAudioProcessorEditor::MenuChanged()
     
     audioProcessor.mDuration = 1.f;
     
-    //this needs to be more elegant
-    audioProcessor.mSelection = mMenu.getSelectedId();
+    //getSelectedId starts at 1, and selection list starts at 0
+    audioProcessor.mSelection = mMenu.getSelectedId() - 1;
     
-    switch (mMenu.getSelectedId())
+    if(mMenu.getSelectedId() - 1 == audioProcessor.mArrSelect.indexOf("load..."))
+    {
+        audioProcessor.mChooser = std::make_unique<FileChooser> ("Please select the audio file you want to load...",
+                                                                 juce::File{},
+                                                                 "*.aac;;*.aiff;;*.flac;;*.m4a;;*.mp3;;*.ogg;;*.wav;;*.wma");
+
+        auto folderChooserFlags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
+
+        audioProcessor.mChooser->launchAsync (folderChooserFlags, [this] (const FileChooser& chooser)
+        {
+            auto file = chooser.getResult();
+            audioProcessor.mFormatReader = nullptr;
+            audioProcessor.mFormatReader = audioProcessor.mFormatManager.createReaderFor(file);
+            if(audioProcessor.mFormatReader!=nullptr)
             {
-                case RepeatorAudioProcessor::load:
-                {
-                    audioProcessor.mChooser = std::make_unique<FileChooser> ("Please select the audio file you want to load...",
-                                                              juce::File{},
-                                                              "*.aac;;*.aiff;;*.flac;;*.m4a;;*.mp3;;*.ogg;;*.wav;;*.wma");
+                audioProcessor.mFileName = file.getFileName();
+                mMenu.addItem(audioProcessor.mFileName, audioProcessor.mArrSelect.size()+1);
+                mMenu.setSelectedId(audioProcessor.mArrSelect.size()+1);
+                audioProcessor.mArrSelect.add(audioProcessor.mFileName);
+                //this should be updated to be more elegant
+                audioProcessor.mSelection = audioProcessor.mArrSelect.indexOf("load...");
 
-                    auto folderChooserFlags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
-
-                    audioProcessor.mChooser->launchAsync (folderChooserFlags, [this] (const FileChooser& chooser)
-                    {
-                        auto file = chooser.getResult();
-                        audioProcessor.mFormatReader = nullptr;
-                        audioProcessor.mFormatReader = audioProcessor.mFormatManager.createReaderFor(file);
-                        if(audioProcessor.mFormatReader!=nullptr)
-                        {
-                            audioProcessor.mFileName = file.getFileName();
-                            
-                            
-                            mMenu.addItem(audioProcessor.mFileName, audioProcessor.mArrSelect.size());
-                            mMenu.setSelectedId(audioProcessor.mArrSelect.size());
-                            audioProcessor.mArrSelect.add(audioProcessor.mFileName);
-                            //this should be updated to be more elegant
-                            audioProcessor.mSelection = RepeatorAudioProcessor::load;
-
-                            
-                            audioProcessor.loadFile();
-                        }
-                    });
-                    break;
-                }
-                default: break;
+                audioProcessor.loadFile();
             }
+        });
+    }
 }
 
 
@@ -144,11 +138,11 @@ void RepeatorAudioProcessorEditor::filesDropped(const StringArray& files, int, i
         audioProcessor.mFileName = file.getFileName();
         
         
-        mMenu.addItem(audioProcessor.mFileName, audioProcessor.mArrSelect.size());
-        mMenu.setSelectedId(audioProcessor.mArrSelect.size());
+        mMenu.addItem(audioProcessor.mFileName, audioProcessor.mArrSelect.size()+1);
+        mMenu.setSelectedId(audioProcessor.mArrSelect.size()+1);
         audioProcessor.mArrSelect.add(audioProcessor.mFileName);
         //this should be updated to be more elegant
-        audioProcessor.mSelection = RepeatorAudioProcessor::load;
+        audioProcessor.mSelection = audioProcessor.mArrSelect.indexOf("load...");
 
         audioProcessor.loadFileWithName(files);
     }
