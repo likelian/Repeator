@@ -99,15 +99,35 @@ void RepeatorAudioProcessorEditor::MenuChanged()
             {
                 case RepeatorAudioProcessor::load:
                 {
+                    audioProcessor.mChooser = std::make_unique<FileChooser> ("Please select the audio file you want to load...",
+                                                              juce::File{},
+                                                              "*.aac;;*.aiff;;*.flac;;*.m4a;;*.mp3;;*.ogg;;*.wav;;*.wma");
+
+                    auto folderChooserFlags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
+
+                    audioProcessor.mChooser->launchAsync (folderChooserFlags, [this] (const FileChooser& chooser)
+                    {
+                        auto file = chooser.getResult();
+                        audioProcessor.mFormatReader = nullptr;
+                        audioProcessor.mFormatReader = audioProcessor.mFormatManager.createReaderFor(file);
+                        
+                        if(audioProcessor.mFormatReader!=nullptr)
+                        {
+                            audioProcessor.mFileName = file.getFileName();
+                            mMenu.addItem(audioProcessor.mFileName, 7);
+                            mMenu.setSelectedId(7);
+                            
+                            //this should be updated to be more elegant
+                            audioProcessor.mSelection = RepeatorAudioProcessor::load;
+                            
+                            //add new name to std::list (replacing enum mSelections)
+                            //change mSelection to new item
+                        }
+                    });
+                                           
                     audioProcessor.loadFile();
                     
-                    if(audioProcessor.mFormatReader!=nullptr)
-                    {
-                        mMenu.addItem(audioProcessor.mFileName, 7);
-                        mMenu.setSelectedId(7);
-                        //add new name to std::list (replacing enum mSelections)
-                        //change mSelection to new item
-                    }
+                    
                     
                     break;
                 }

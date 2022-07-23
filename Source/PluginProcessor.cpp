@@ -329,24 +329,10 @@ AudioProcessorValueTreeState::ParameterLayout RepeatorAudioProcessor::createPara
 //==============================================================================
 void RepeatorAudioProcessor::loadFile()
 {
-    
-    mChooser = std::make_unique<FileChooser> ("Please select the audio file you want to load...",
-                                              juce::File{},
-                                              "*.aac;;*.aiff;;*.flac;;*.m4a;;*.mp3;;*.ogg;;*.wav;;*.wma");
-
-    auto folderChooserFlags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
-
-    mChooser->launchAsync (folderChooserFlags, [this] (const FileChooser& chooser)
-    {
-        auto file = chooser.getResult();
-        mFormatReader = nullptr;
-        mFormatReader = mFormatManager.createReaderFor(file);
-        if(mFormatReader!=nullptr)
+    if(mFormatReader!=nullptr)
         {
-            mFileName = file.getFileName();
-            
             mDuration = mFormatReader->lengthInSamples / mFormatReader->sampleRate;
-            
+    
             if(mFormatReader->sampleRate != getSampleRate())
             {
                 reSample();
@@ -355,13 +341,12 @@ void RepeatorAudioProcessor::loadFile()
             {
                 mIsResampled = false;
                 int newLengthInSamples = juce::roundToInt(mFormatReader->lengthInSamples) + 4096;
-                
+    
                 mAudioBuffer.clear();
                 mAudioBuffer.setSize(getTotalNumInputChannels(), newLengthInSamples);
                 mFormatReader->read(&mAudioBuffer, 0, newLengthInSamples-4096, mPlayHead, false, false);
             }
         }
-    });
 }
 
 
@@ -410,7 +395,6 @@ void RepeatorAudioProcessor::reSample()
     AudioFormatReaderSource tempReaderSource(mFormatReader, false);
     mReaderSource = &tempReaderSource;
     
-    //ResamplingAudioSource tempResamplingSource(mReaderSource, false, mFormatReader->numChannels);
     ResamplingAudioSource tempResamplingSource(mReaderSource, false, getTotalNumInputChannels());
     
     mResamplingSource = &tempResamplingSource;
