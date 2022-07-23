@@ -233,7 +233,7 @@ void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             }
         }
     }
-    else if(mSelection==load && mIsPlay==true && mFormatReader!=nullptr)
+    else if(mSelection>=load && mIsPlay==true && mFormatReader!=nullptr)
     {
         
 
@@ -329,57 +329,43 @@ AudioProcessorValueTreeState::ParameterLayout RepeatorAudioProcessor::createPara
 //==============================================================================
 void RepeatorAudioProcessor::loadFile()
 {
-    if(mFormatReader!=nullptr)
-        {
-            mDuration = mFormatReader->lengthInSamples / mFormatReader->sampleRate;
+    mDuration = mFormatReader->lengthInSamples / mFormatReader->sampleRate;
     
-            if(mFormatReader->sampleRate != getSampleRate())
-            {
-                reSample();
-            }
-            else
-            {
-                mIsResampled = false;
-                int newLengthInSamples = juce::roundToInt(mFormatReader->lengthInSamples) + 4096;
-    
-                mAudioBuffer.clear();
-                mAudioBuffer.setSize(getTotalNumInputChannels(), newLengthInSamples);
-                mFormatReader->read(&mAudioBuffer, 0, newLengthInSamples-4096, mPlayHead, false, false);
-            }
-        }
+    if(mFormatReader->sampleRate != getSampleRate())
+    {
+        reSample();
+    }
+    else
+    {
+        mIsResampled = false;
+        int newLengthInSamples = juce::roundToInt(mFormatReader->lengthInSamples) + 4096;
+        mAudioBuffer.clear();
+        mAudioBuffer.setSize(getTotalNumInputChannels(), newLengthInSamples);
+        mFormatReader->read(&mAudioBuffer, 0, newLengthInSamples-4096, mPlayHead, false, false);
+    }
 }
+
 
 
 void RepeatorAudioProcessor::loadFileWithName(const StringArray& files)
 {
-    File file(files[0]);
-    
-    mFormatReader = nullptr;
-    mFormatReader = mFormatManager.createReaderFor(file);
-    if(mFormatReader!=nullptr)
+
+    mDuration = mFormatReader->lengthInSamples / mFormatReader->sampleRate;
+        
+    if(mFormatReader->sampleRate != getSampleRate())
     {
-        mFileName = file.getFileName();
-        
-        mSelection = load;
-        mDuration = mFormatReader->lengthInSamples / mFormatReader->sampleRate;
-        
-        if(mFormatReader->sampleRate != getSampleRate())
-        {
-            reSample();
-        }
-        else
-        {
-            mIsResampled = false;
-            int newLengthInSamples = juce::roundToInt(mFormatReader->lengthInSamples) + 4096;
-            
-            mAudioBuffer.clear();
-            mAudioBuffer.setSize(getTotalNumInputChannels(), newLengthInSamples);
-            mFormatReader->read(&mAudioBuffer, 0, newLengthInSamples-4096, mPlayHead, false, false);
-        }
-        
-        
+        reSample();
+    }
+    else
+    {
+        mIsResampled = false;
+        int newLengthInSamples = juce::roundToInt(mFormatReader->lengthInSamples) + 4096;
+        mAudioBuffer.clear();
+        mAudioBuffer.setSize(getTotalNumInputChannels(), newLengthInSamples);
+        mFormatReader->read(&mAudioBuffer, 0, newLengthInSamples-4096, mPlayHead, false, false);
     }
 }
+
 
 
 //==============================================================================

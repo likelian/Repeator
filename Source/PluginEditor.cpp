@@ -93,6 +93,7 @@ void RepeatorAudioProcessorEditor::MenuChanged()
     
     audioProcessor.mDuration = 1.f;
     
+    //this needs to be more elegant
     audioProcessor.mSelection = mMenu.getSelectedId();
     
     switch (mMenu.getSelectedId())
@@ -110,7 +111,6 @@ void RepeatorAudioProcessorEditor::MenuChanged()
                         auto file = chooser.getResult();
                         audioProcessor.mFormatReader = nullptr;
                         audioProcessor.mFormatReader = audioProcessor.mFormatManager.createReaderFor(file);
-                        
                         if(audioProcessor.mFormatReader!=nullptr)
                         {
                             audioProcessor.mFileName = file.getFileName();
@@ -122,13 +122,10 @@ void RepeatorAudioProcessorEditor::MenuChanged()
                             
                             //add new name to std::list (replacing enum mSelections)
                             //change mSelection to new item
+                            
+                            audioProcessor.loadFile();
                         }
                     });
-                                           
-                    audioProcessor.loadFile();
-                    
-                    
-                    
                     break;
                 }
                 default: break;
@@ -138,13 +135,24 @@ void RepeatorAudioProcessorEditor::MenuChanged()
 
 void RepeatorAudioProcessorEditor::filesDropped(const StringArray& files, int, int)
 {
-    audioProcessor.loadFileWithName(files);
+    File file(files[0]);
     
+    audioProcessor.mFormatReader = nullptr;
+    audioProcessor.mFormatReader = audioProcessor.mFormatManager.createReaderFor(file);
     if(audioProcessor.mFormatReader!=nullptr)
     {
+        audioProcessor.mFileName = file.getFileName();
+        
         mMenu.addItem(audioProcessor.mFileName, 8);
         mMenu.setSelectedId(8);
         //add new name to std::list (replacing enum mSelections)
         //change mSelection to new item
+        
+        //this should be updated to be more elegant
+        audioProcessor.mSelection = RepeatorAudioProcessor::load;
+        
+        //add new name to std::list (replacing enum mSelections)
+        //change mSelection to new item
+        audioProcessor.loadFileWithName(files);
     }
 }
