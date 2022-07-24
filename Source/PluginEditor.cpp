@@ -50,14 +50,6 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
     //==============================================================================
     addAndMakeVisible(mMenu);
     mMenu.addItemList(audioProcessor.mArrSelect, 1);
-    
-//    mMenu.addItem("none", 1);
-//    mMenu.addItem("silence", 2);
-//    mMenu.addItem("beep", 3);
-//    mMenu.addItem("noise", 4);
-//    mMenu.addItem("new", 5);
-//    mMenu.addItem("load...", 6);
-    
     mMenu.setSelectedId(audioProcessor.mSelection);
     
     mMenu.onChange = [this] { MenuChanged(); };
@@ -109,19 +101,8 @@ void RepeatorAudioProcessorEditor::MenuChanged()
         audioProcessor.mChooser->launchAsync (folderChooserFlags, [this] (const FileChooser& chooser)
         {
             auto file = chooser.getResult();
-            audioProcessor.mFormatReader = nullptr;
-            audioProcessor.mFormatReader = audioProcessor.mFormatManager.createReaderFor(file);
-            if(audioProcessor.mFormatReader!=nullptr)
-            {
-                audioProcessor.mFileName = file.getFileName();
-                mMenu.addItem(audioProcessor.mFileName, audioProcessor.mArrSelect.size()+1);
-                mMenu.setSelectedId(audioProcessor.mArrSelect.size()+1);
-                audioProcessor.mArrSelect.add(audioProcessor.mFileName);
-                //this should be updated to be more elegant
-                audioProcessor.mSelection = audioProcessor.mArrSelect.indexOf("load...");
-
-                audioProcessor.loadFile();
-            }
+            
+            EditorLoadFile(file);
         });
     }
 }
@@ -131,19 +112,23 @@ void RepeatorAudioProcessorEditor::filesDropped(const StringArray& files, int, i
 {
     File file(files[0]);
     
+    EditorLoadFile(file);
+}
+
+
+
+void RepeatorAudioProcessorEditor::EditorLoadFile(File file)
+{
     audioProcessor.mFormatReader = nullptr;
     audioProcessor.mFormatReader = audioProcessor.mFormatManager.createReaderFor(file);
     if(audioProcessor.mFormatReader!=nullptr)
     {
         audioProcessor.mFileName = file.getFileName();
-        
-        
         mMenu.addItem(audioProcessor.mFileName, audioProcessor.mArrSelect.size()+1);
         mMenu.setSelectedId(audioProcessor.mArrSelect.size()+1);
         audioProcessor.mArrSelect.add(audioProcessor.mFileName);
-        //this should be updated to be more elegant
         audioProcessor.mSelection = audioProcessor.mArrSelect.indexOf("load...");
 
-        audioProcessor.loadFileWithName(files);
+        audioProcessor.loadFile();
     }
 }

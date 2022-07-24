@@ -66,19 +66,6 @@ public:
     
     
     //==============================================================================
-//    enum selections {
-//        empty = 0,
-//        none,
-//        silence,
-//        beep,
-//        noise,
-//        added,
-//        load
-//    };
-    
-    
-    
-    //==============================================================================
     float mPeriod = 15.f;
     float mLastPos = 0.f;
     float mCurrentPos = 0.f;
@@ -99,9 +86,8 @@ public:
     AudioFormatManager mFormatManager;
     AudioFormatReader* mFormatReader {nullptr}; //point to somewhere else when choose another file
     
-    void loadFileWithName(const StringArray& files);
-    
     StringArray mArrSelect;
+    StringArray mArrPath;
     
     //==============================================================================
     PresetManager* getPresetManager();
