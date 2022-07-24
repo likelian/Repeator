@@ -51,10 +51,8 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
     addAndMakeVisible(mMenu);
     mMenu.addItemList(audioProcessor.mArrSelect, 1);
     
-    audioProcessor.isLoadFile = false;
     mMenu.setSelectedId(audioProcessor.mSelection + 1);
     mMenu.onChange = [this] { MenuChanged(); };
-    audioProcessor.isLoadFile = true;
     
 }
 
@@ -90,6 +88,7 @@ void RepeatorAudioProcessorEditor::MenuChanged()
     audioProcessor.mDuration = 1.f; //reset mDuration
     
     //getSelectedId starts at 1, and selection list starts at 0
+    mPreSelection = audioProcessor.mSelection;
     audioProcessor.mSelection = mMenu.getSelectedId() - 1;
     
     if(mMenu.getSelectedId() - 1 == audioProcessor.mArrSelect.indexOf("load..."))
@@ -161,9 +160,11 @@ void RepeatorAudioProcessorEditor::EditorLoadFile(File file)
         
         audioProcessor.mArrPath.add(file.getFullPathName());
         //indexOf("load...") is the current new file's index
-        audioProcessor.isLoadFile = false;
         mMenu.setSelectedId(audioProcessor.mArrSelect.indexOf("load..."));
-        audioProcessor.isLoadFile = true;
-        
+    }
+    else //loading cancelled or unsuccessful
+    {
+        audioProcessor.mSelection = mPreSelection;
+        mMenu.setSelectedId(mPreSelection + 1);
     }
 }
