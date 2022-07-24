@@ -88,8 +88,6 @@ public:
     StringArray mArrSelect;
     StringArray mArrPath;
     
-    bool isLoadFile;
-    
     //==============================================================================
     PresetManager* getPresetManager();
     

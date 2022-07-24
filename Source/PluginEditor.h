@@ -44,6 +44,8 @@ private:
     juce::Label  mPeriodSLabel;
     juce::ComboBox mMenu;
     
+    int mPreSelection;
+    
     void MenuChanged();
     
     void EditorLoadFile(File file);
