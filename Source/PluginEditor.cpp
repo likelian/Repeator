@@ -49,16 +49,12 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
 
     //==============================================================================
     addAndMakeVisible(mMenu);
-    mMenu.addItem("none", 1);
-    mMenu.addItem("silence", 2);
-    mMenu.addItem("beep", 3);
-    mMenu.addItem("noise", 4);
-    mMenu.addItem("new", 5);
-    mMenu.addItem("load...", 6);
+    mMenu.addItemList(audioProcessor.mArrSelect, 1);
     
-    mMenu.setSelectedId(audioProcessor.mSelection);
-    
+    audioProcessor.isLoadFile = false;
+    mMenu.setSelectedId(audioProcessor.mSelection + 1);
     mMenu.onChange = [this] { MenuChanged(); };
+    audioProcessor.isLoadFile = true;
     
 }
 
@@ -87,27 +83,87 @@ void RepeatorAudioProcessorEditor::resized()
     mMenu.setBounds(10, 90, 100, 25);
 }
 
-
+//==============================================================================
 void RepeatorAudioProcessorEditor::MenuChanged()
 {
     
-    audioProcessor.mDuration = 1.f;
+    audioProcessor.mDuration = 1.f; //reset mDuration
     
-    audioProcessor.mSelection = mMenu.getSelectedId();
+    //getSelectedId starts at 1, and selection list starts at 0
+    audioProcessor.mSelection = mMenu.getSelectedId() - 1;
     
-    switch (mMenu.getSelectedId())
+    if(mMenu.getSelectedId() - 1 == audioProcessor.mArrSelect.indexOf("load..."))
+    {
+        audioProcessor.mChooser = std::make_unique<FileChooser> ("Please select the audio file you want to load...",
+                                                                 juce::File{},
+                                                                 "*.aac;;*.aiff;;*.flac;;*.m4a;;*.mp3;;*.ogg;;*.wav;;*.wma");
+
+        auto folderChooserFlags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
+
+        audioProcessor.mChooser->launchAsync (folderChooserFlags, [this] (const FileChooser& chooser)
+        {
+            auto file = chooser.getResult();
+            
+            EditorLoadFile(file);
+        });
+    }
+    //choose an exisiting file in the menu
+    else if(
+            //selection is a file
+            mMenu.getSelectedId() - 1 > audioProcessor.mArrSelect.indexOf("noise")
+            //selection is not what's currently loaded in mAudioBuffer
+            && mMenu.getSelectedId() - 1 != audioProcessor.mArrSelect.indexOf(audioProcessor.mFileName)
+            )
+    {
+        int idx = mMenu.getSelectedId() - 2 - audioProcessor.mArrSelect.indexOf("noise");
+        if(idx < audioProcessor.mArrPath.size())
+        {
+            const File file(audioProcessor.mArrPath.getReference(idx));
+            
+            audioProcessor.mFormatReader = nullptr;
+            audioProcessor.mFormatReader = audioProcessor.mFormatManager.createReaderFor(file);
+            if(audioProcessor.mFormatReader!=nullptr)
             {
-                case RepeatorAudioProcessor::load:
-                {
-                    audioProcessor.loadFile();
-                    break;
-                }
-                default: break;
+                audioProcessor.mFileName = file.getFileName();
+                audioProcessor.loadFile();
             }
+        }
+        
+        
+    }
 }
 
 
 void RepeatorAudioProcessorEditor::filesDropped(const StringArray& files, int, int)
 {
-    audioProcessor.loadFileWithName(files);
+    File file(files[0]);
+    
+    EditorLoadFile(file);
+}
+
+
+
+void RepeatorAudioProcessorEditor::EditorLoadFile(File file)
+{
+    audioProcessor.mFormatReader = nullptr;
+    audioProcessor.mFormatReader = audioProcessor.mFormatManager.createReaderFor(file);
+    if(audioProcessor.mFormatReader!=nullptr)
+    {
+        audioProcessor.mFileName = file.getFileName();
+        
+        //insert the new filename before "load..."
+        audioProcessor.mArrSelect.insert(audioProcessor.mArrSelect.size()-1, audioProcessor.mFileName);
+        mMenu.clear();
+        mMenu.addItemList(audioProcessor.mArrSelect, 1);
+        
+        
+        audioProcessor.loadFile();
+        
+        audioProcessor.mArrPath.add(file.getFullPathName());
+        //indexOf("load...") is the current new file's index
+        audioProcessor.isLoadFile = false;
+        mMenu.setSelectedId(audioProcessor.mArrSelect.indexOf("load..."));
+        audioProcessor.isLoadFile = true;
+        
+    }
 }

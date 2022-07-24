@@ -33,6 +33,13 @@ RepeatorAudioProcessor::RepeatorAudioProcessor()
 {
     mFormatManager.registerBasicFormats();
     mPresetManager = std::make_unique<PresetManager>(this);
+    
+    //mArrSelect.add("empty");
+    mArrSelect.add("bypass");
+    mArrSelect.add("silence");
+    mArrSelect.add("beep");
+    mArrSelect.add("noise");
+    mArrSelect.add("load...");
 }
 
 
@@ -41,6 +48,9 @@ RepeatorAudioProcessor::~RepeatorAudioProcessor()
 {
     delete mFormatReader;
     mAudioBuffer.clear();
+    mArrSelect.clear();
+    delete mReaderSource;
+    delete mResamplingSource;
 }
 
 //==============================================================================
@@ -208,7 +218,7 @@ void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
     
-    if(mSelection==silence && mIsPlay==true)
+    if(mSelection==mArrSelect.indexOf("silence") && mIsPlay==true)
     {
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {
@@ -220,7 +230,7 @@ void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             }
         }
     }
-    else if(mSelection==noise && mIsPlay==true)
+    else if(mSelection==mArrSelect.indexOf("noise") && mIsPlay==true)
     {
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {
@@ -229,16 +239,15 @@ void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             for (int i=0; i<buffer.getNumSamples(); i++)
             {
                 channelData[i] += mGain * (-0.09f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(0.18f))));;
-                
             }
         }
     }
-    else if(mSelection==load && mIsPlay==true && mFormatReader!=nullptr)
+    //the condition is subject to change
+    //selection is beyond "noise", play the sample
+    else if(mSelection>=4 && mIsPlay==true && !mAudioBuffer.hasBeenCleared())
     {
         
-
         mPlayHead += buffer.getNumSamples();
-        
         
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {
@@ -246,9 +255,7 @@ void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
 
             for (int i=0; i<buffer.getNumSamples(); i++)
             {
-                //channelData[i] = mGain * mBuffer.getSample(channel, i);
-                
-                channelData[i] = mGain * 
+                channelData[i] += mGain * 
                 mAudioBuffer.getSample(channel, i+mPlayHead);
             }
         }
@@ -329,65 +336,24 @@ AudioProcessorValueTreeState::ParameterLayout RepeatorAudioProcessor::createPara
 //==============================================================================
 void RepeatorAudioProcessor::loadFile()
 {
+    mDuration = mFormatReader->lengthInSamples / mFormatReader->sampleRate;
     
-    mChooser = std::make_unique<FileChooser> ("Please select the audio file you want to load...",
-                                              juce::File{},
-                                              "*.aac;;*.aiff;;*.flac;;*.m4a;;*.mp3;;*.ogg;;*.wav;;*.wma");
-
-    auto folderChooserFlags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
-
-    mChooser->launchAsync (folderChooserFlags, [this] (const FileChooser& chooser)
+    if(mFormatReader->sampleRate != getSampleRate())
     {
-        auto file = chooser.getResult();
-        mFormatReader = mFormatManager.createReaderFor(file);
-        if(mFormatReader!=nullptr)
-        {
-            mDuration = mFormatReader->lengthInSamples / mFormatReader->sampleRate;
-            
-            if(mFormatReader->sampleRate != getSampleRate())
-            {
-                reSample();
-            }
-            else
-            {
-                mIsResampled = false;
-                int newLengthInSamples = juce::roundToInt(mFormatReader->lengthInSamples) + 4096;
-                
-                mAudioBuffer.clear();
-                mAudioBuffer.setSize(getTotalNumInputChannels(), newLengthInSamples);
-                mFormatReader->read(&mAudioBuffer, 0, newLengthInSamples-4096, mPlayHead, false, false);
-            }
-        }
-    });
-}
-
-
-void RepeatorAudioProcessor::loadFileWithName(const StringArray& files)
-{
-    File file(files[0]);
-    
-    mFormatReader = mFormatManager.createReaderFor(file);
-    
-    if(mFormatReader!=nullptr)
-    {
-        mSelection = load;
-        mDuration = mFormatReader->lengthInSamples / mFormatReader->sampleRate;
-        
-        
-        if(mFormatReader->sampleRate != getSampleRate())
-        {
-            reSample();
-        }
-        else
-        {
-            mIsResampled = false;
-            int newLengthInSamples = juce::roundToInt(mFormatReader->lengthInSamples) + 4096;
-            
-            mAudioBuffer.clear();
-            mAudioBuffer.setSize(getTotalNumInputChannels(), newLengthInSamples);
-            mFormatReader->read(&mAudioBuffer, 0, newLengthInSamples-4096, mPlayHead, false, false);
-        }
+        reSample();
     }
+    else
+    {
+        mIsResampled = false;
+        int newLengthInSamples = juce::roundToInt(mFormatReader->lengthInSamples) + 4096;
+        mAudioBuffer.clear();
+        mAudioBuffer.setSize(getTotalNumInputChannels(), newLengthInSamples);
+        mFormatReader->read(&mAudioBuffer, 0, newLengthInSamples-4096, mPlayHead, false, false);
+    }
+    
+    mFormatReader = {nullptr};
+    
+    
 }
 
 
@@ -404,7 +370,6 @@ void RepeatorAudioProcessor::reSample()
     AudioFormatReaderSource tempReaderSource(mFormatReader, false);
     mReaderSource = &tempReaderSource;
     
-    //ResamplingAudioSource tempResamplingSource(mReaderSource, false, mFormatReader->numChannels);
     ResamplingAudioSource tempResamplingSource(mReaderSource, false, getTotalNumInputChannels());
     
     mResamplingSource = &tempResamplingSource;
@@ -413,7 +378,6 @@ void RepeatorAudioProcessor::reSample()
     mResamplingSource->prepareToPlay (newLengthInSamples, getSampleRate());
     
     mAudioBuffer.clear();
-
     mAudioBuffer.setSize(getTotalNumInputChannels(), newLengthInSamples);
     AudioSourceChannelInfo info(&mAudioBuffer, 0, newLengthInSamples);
 
@@ -423,7 +387,6 @@ void RepeatorAudioProcessor::reSample()
     
     mReaderSource = nullptr;
     mResamplingSource = nullptr;
-    
 }
 
 

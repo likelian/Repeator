@@ -46,6 +46,8 @@ private:
     
     void MenuChanged();
     
+    void EditorLoadFile(File file);
+    
     
     /*
      When this object is deleted, the connection is broken. Make sure that your AudioProcessorValueTreeState and Slider aren't deleted before this object!
