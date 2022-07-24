@@ -9,7 +9,6 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include <map>
 
 #include "PresetManager.h"
 
@@ -88,6 +87,8 @@ public:
     
     StringArray mArrSelect;
     StringArray mArrPath;
+    
+    bool isLoadFile;
     
     //==============================================================================
     PresetManager* getPresetManager();

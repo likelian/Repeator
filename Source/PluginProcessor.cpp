@@ -239,18 +239,15 @@ void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             for (int i=0; i<buffer.getNumSamples(); i++)
             {
                 channelData[i] += mGain * (-0.09f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(0.18f))));;
-                
             }
         }
     }
     //the condition is subject to change
     //selection is beyond "noise", play the sample
-    else if(mSelection>=4 && mIsPlay==true && mFormatReader!=nullptr)
+    else if(mSelection>=4 && mIsPlay==true && !mAudioBuffer.hasBeenCleared())
     {
         
-
         mPlayHead += buffer.getNumSamples();
-        
         
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {
@@ -353,6 +350,10 @@ void RepeatorAudioProcessor::loadFile()
         mAudioBuffer.setSize(getTotalNumInputChannels(), newLengthInSamples);
         mFormatReader->read(&mAudioBuffer, 0, newLengthInSamples-4096, mPlayHead, false, false);
     }
+    
+    mFormatReader = {nullptr};
+    
+    
 }
 
 
@@ -377,7 +378,6 @@ void RepeatorAudioProcessor::reSample()
     mResamplingSource->prepareToPlay (newLengthInSamples, getSampleRate());
     
     mAudioBuffer.clear();
-
     mAudioBuffer.setSize(getTotalNumInputChannels(), newLengthInSamples);
     AudioSourceChannelInfo info(&mAudioBuffer, 0, newLengthInSamples);
 

@@ -50,9 +50,11 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
     //==============================================================================
     addAndMakeVisible(mMenu);
     mMenu.addItemList(audioProcessor.mArrSelect, 1);
-    mMenu.setSelectedId(audioProcessor.mSelection);
     
+    audioProcessor.isLoadFile = false;
+    mMenu.setSelectedId(audioProcessor.mSelection + 1);
     mMenu.onChange = [this] { MenuChanged(); };
+    audioProcessor.isLoadFile = true;
     
 }
 
@@ -105,6 +107,30 @@ void RepeatorAudioProcessorEditor::MenuChanged()
             EditorLoadFile(file);
         });
     }
+    //choose an exisiting file in the menu
+    else if(
+            //selection is a file
+            mMenu.getSelectedId() - 1 > audioProcessor.mArrSelect.indexOf("noise")
+            //selection is not what's currently loaded in mAudioBuffer
+            && mMenu.getSelectedId() - 1 != audioProcessor.mArrSelect.indexOf(audioProcessor.mFileName)
+            )
+    {
+        int idx = mMenu.getSelectedId() - 2 - audioProcessor.mArrSelect.indexOf("noise");
+        if(idx < audioProcessor.mArrPath.size())
+        {
+            const File file(audioProcessor.mArrPath.getReference(idx));
+            
+            audioProcessor.mFormatReader = nullptr;
+            audioProcessor.mFormatReader = audioProcessor.mFormatManager.createReaderFor(file);
+            if(audioProcessor.mFormatReader!=nullptr)
+            {
+                audioProcessor.mFileName = file.getFileName();
+                audioProcessor.loadFile();
+            }
+        }
+        
+        
+    }
 }
 
 
@@ -133,8 +159,11 @@ void RepeatorAudioProcessorEditor::EditorLoadFile(File file)
         
         audioProcessor.loadFile();
         
-        //indexOf("load...") is the current new file's index
-        mMenu.setSelectedId(audioProcessor.mArrSelect.indexOf("load..."));
         audioProcessor.mArrPath.add(file.getFullPathName());
+        //indexOf("load...") is the current new file's index
+        audioProcessor.isLoadFile = false;
+        mMenu.setSelectedId(audioProcessor.mArrSelect.indexOf("load..."));
+        audioProcessor.isLoadFile = true;
+        
     }
 }
