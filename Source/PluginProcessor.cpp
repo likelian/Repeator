@@ -35,11 +35,10 @@ RepeatorAudioProcessor::RepeatorAudioProcessor()
     mPresetManager = std::make_unique<PresetManager>(this);
     
     //mArrSelect.add("empty");
-    mArrSelect.add("none");
+    mArrSelect.add("bypass");
     mArrSelect.add("silence");
     mArrSelect.add("beep");
     mArrSelect.add("noise");
-    mArrSelect.add("added");
     mArrSelect.add("load...");
 }
 
@@ -47,8 +46,7 @@ RepeatorAudioProcessor::RepeatorAudioProcessor()
 
 RepeatorAudioProcessor::~RepeatorAudioProcessor()
 {
-    //delete mFormatReader;
-    mFormatReader = nullptr;
+    delete mFormatReader;
     mAudioBuffer.clear();
     mArrSelect.clear();
     delete mReaderSource;
@@ -246,7 +244,8 @@ void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
         }
     }
     //the condition is subject to change
-    else if(mSelection>=mArrSelect.indexOf("load...") && mIsPlay==true && mFormatReader!=nullptr)
+    //selection is beyond "noise", play the sample
+    else if(mSelection>=4 && mIsPlay==true && mFormatReader!=nullptr)
     {
         
 
@@ -259,7 +258,7 @@ void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
 
             for (int i=0; i<buffer.getNumSamples(); i++)
             {
-                channelData[i] = mGain * 
+                channelData[i] += mGain * 
                 mAudioBuffer.getSample(channel, i+mPlayHead);
             }
         }

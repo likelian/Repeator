@@ -81,11 +81,11 @@ void RepeatorAudioProcessorEditor::resized()
     mMenu.setBounds(10, 90, 100, 25);
 }
 
-
+//==============================================================================
 void RepeatorAudioProcessorEditor::MenuChanged()
 {
     
-    audioProcessor.mDuration = 1.f;
+    audioProcessor.mDuration = 1.f; //reset mDuration
     
     //getSelectedId starts at 1, and selection list starts at 0
     audioProcessor.mSelection = mMenu.getSelectedId() - 1;
@@ -124,11 +124,17 @@ void RepeatorAudioProcessorEditor::EditorLoadFile(File file)
     if(audioProcessor.mFormatReader!=nullptr)
     {
         audioProcessor.mFileName = file.getFileName();
-        mMenu.addItem(audioProcessor.mFileName, audioProcessor.mArrSelect.size()+1);
-        mMenu.setSelectedId(audioProcessor.mArrSelect.size()+1);
-        audioProcessor.mArrSelect.add(audioProcessor.mFileName);
-        audioProcessor.mSelection = audioProcessor.mArrSelect.indexOf("load...");
-
+        
+        //insert the new filename before "load..."
+        audioProcessor.mArrSelect.insert(audioProcessor.mArrSelect.size()-1, audioProcessor.mFileName);
+        mMenu.clear();
+        mMenu.addItemList(audioProcessor.mArrSelect, 1);
+        
+        
         audioProcessor.loadFile();
+        
+        //indexOf("load...") is the current new file's index
+        mMenu.setSelectedId(audioProcessor.mArrSelect.indexOf("load..."));
+        audioProcessor.mArrPath.add(file.getFullPathName());
     }
 }
