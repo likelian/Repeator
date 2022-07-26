@@ -119,12 +119,13 @@ void RepeatorAudioProcessorEditor::MenuChanged()
         {
             const File file(audioProcessor.mArrPath.getReference(idx));
             
-            audioProcessor.mFormatReader = nullptr;
-            audioProcessor.mFormatReader = audioProcessor.mFormatManager.createReaderFor(file);
-            if(audioProcessor.mFormatReader!=nullptr)
+            
+            AudioFormatReader* reader = audioProcessor.mFormatManager.createReaderFor(file);
+            
+            if(reader!=nullptr)
             {
                 audioProcessor.mFileName = file.getFileName();
-                audioProcessor.loadFile();
+                audioProcessor.loadFile(reader);
             }
         }
         
@@ -141,22 +142,20 @@ void RepeatorAudioProcessorEditor::filesDropped(const StringArray& files, int, i
 }
 
 
-
+//change the name, like "add file"
 void RepeatorAudioProcessorEditor::EditorLoadFile(File file)
 {
-    audioProcessor.mFormatReader = nullptr;
-    audioProcessor.mFormatReader = audioProcessor.mFormatManager.createReaderFor(file);
-    if(audioProcessor.mFormatReader!=nullptr)
+    AudioFormatReader* reader = audioProcessor.mFormatManager.createReaderFor(file);
+    if(reader!=nullptr)
     {
         audioProcessor.mFileName = file.getFileName();
         
-        //insert the new filename before "load..."
+        //insert the new filename before "load..." in menu
         audioProcessor.mArrSelect.insert(audioProcessor.mArrSelect.size()-1, audioProcessor.mFileName);
         mMenu.clear();
         mMenu.addItemList(audioProcessor.mArrSelect, 1);
         
-        
-        audioProcessor.loadFile();
+        audioProcessor.loadFile(reader);
         
         audioProcessor.mArrPath.add(file.getFullPathName());
         //indexOf("load...") is the current new file's index

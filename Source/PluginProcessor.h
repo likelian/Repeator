@@ -81,10 +81,12 @@ public:
     
     //==============================================================================
     void loadFile();
+    
+    void loadFile(AudioFormatReader* reader);
+    
     std::unique_ptr<FileChooser> mChooser;
     AudioFormatManager mFormatManager;
-    AudioFormatReader* mFormatReader {nullptr}; //point to somewhere else when choose another file
-    
+
     StringArray mArrSelect;
     StringArray mArrPath;
     
@@ -99,10 +101,8 @@ private:
     
     
     //==============================================================================
-    void reSample();
+    void reSample(AudioFormatReader* reader);
     AudioBuffer<float> mAudioBuffer;
-    AudioFormatReaderSource* mReaderSource = nullptr;
-    ResamplingAudioSource* mResamplingSource = nullptr;
     bool mIsResampled = false;
     
     //==============================================================================
