@@ -66,6 +66,7 @@ public:
     
     //==============================================================================
     float mPeriod = 15.f;
+    float mIniPos = 0.f;
     float mLastPos = 0.f;
     float mCurrentPos = 0.f;
     float mDuration = 1.f;
@@ -76,6 +77,7 @@ public:
     //parameters for sample playback
     int mPlayHead = 0;
     float mBlockInSec = 0.f;
+    float mTimeInSec = 0.f;
     
     String mFileName;
     
@@ -110,5 +112,6 @@ private:
     
     std::unique_ptr<PresetManager> mPresetManager;
     
+    bool mIsMoving;
     
 };
