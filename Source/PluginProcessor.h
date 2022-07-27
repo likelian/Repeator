@@ -110,5 +110,6 @@ private:
     
     std::unique_ptr<PresetManager> mPresetManager;
     
+    bool mIsMoving;
     
 };

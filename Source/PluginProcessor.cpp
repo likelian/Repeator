@@ -85,7 +85,7 @@ bool RepeatorAudioProcessor::isMidiEffect() const
 double RepeatorAudioProcessor::getTailLengthSeconds() const
 {
     return 0.0;
-}
+} 
 
 int RepeatorAudioProcessor::getNumPrograms()
 {
@@ -158,18 +158,35 @@ void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
     
     mPeriod = static_cast<float> (mAPVTS.getRawParameterValue("PERIOD")->load());
     
+    //Those variables may be changed to be member variables
     AudioPlayHead* PlayHead = getPlayHead();
     Optional<juce::AudioPlayHead::PositionInfo> PositionInfo = PlayHead->getPosition();
-    Optional< double > timeInSeconds = PositionInfo->getTimeInSeconds();
+    Optional<double> timeInSeconds = PositionInfo->getTimeInSeconds();
+    
+    if(mCurrentPos == static_cast<float>(std::move(*timeInSeconds)))
+    {
+        mIsMoving = false;
+    }
+    else{
+        mIsMoving = true;
+    }
     
     //if the user changed the playback position
-    if (abs(mCurrentPos - static_cast<float>(std::move(*timeInSeconds))) > 1.f)
+    
+    //1.0f?????? questionable!!!!!!!!!
+    //if (abs(mCurrentPos - static_cast<float>(std::move(*timeInSeconds))) > 1.0f)
+    if (abs(mCurrentPos - static_cast<float>(std::move(*timeInSeconds))) > mBlockInSec * 2)
     {
         mLastPos = static_cast<float>(std::move(*timeInSeconds));
         mCurrentPos = mLastPos;
-    }else{
+        mPlayHead = 0;
+    }
+    else{
         mCurrentPos = static_cast<float>(std::move(*timeInSeconds));
     }
+    
+    
+    
     
     
     if (mLastPos + mPeriod < mCurrentPos)
@@ -185,7 +202,18 @@ void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
     else
     {
         mIsPlay = false;
+        mPlayHead = 0;
     }
+    
+    std::cout << "mLastPos: " << mLastPos << std::endl;
+    std::cout << "mCurrentPos: " << mCurrentPos << std::endl;
+    std::cout << "mDuration: " << mDuration << std::endl;
+    std::cout << "mPlayHead: " << mPlayHead << std::endl;
+    std::cout << "BufferLength: " << mAudioBuffer.getNumSamples() << std::endl;
+    std::cout << "mIsPlay: " << mIsPlay << std::endl;
+    std::cout << "--------------" << std::endl;
+    
+    
     
     
     
@@ -240,11 +268,8 @@ void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
     }
     //the condition is subject to change
     //selection is beyond "noise", play the sample
-    else if(mSelection>=4 && mIsPlay==true && !mAudioBuffer.hasBeenCleared())
+    else if(mSelection>=4 && mIsPlay==true && mIsMoving && !mAudioBuffer.hasBeenCleared())
     {
-        
-        mPlayHead += buffer.getNumSamples();
-        
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {
             auto* channelData = buffer.getWritePointer(channel);
@@ -255,6 +280,8 @@ void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
                 mAudioBuffer.getSample(channel, i+mPlayHead);
             }
         }
+        
+        mPlayHead += buffer.getNumSamples();
     }
     else
     {
@@ -336,7 +363,6 @@ void RepeatorAudioProcessor::loadFile(AudioFormatReader* reader)
     if(reader->sampleRate != getSampleRate())
     {
         reSample(reader);
-        delete reader;
     }
     else
     {
@@ -344,9 +370,12 @@ void RepeatorAudioProcessor::loadFile(AudioFormatReader* reader)
         int newLengthInSamples = juce::roundToInt(reader->lengthInSamples) + 4096;
         mAudioBuffer.clear();
         mAudioBuffer.setSize(getTotalNumInputChannels(), newLengthInSamples);
-        reader->read(&mAudioBuffer, 0, newLengthInSamples-4096, mPlayHead, false, false);
-        delete reader;
+        reader->read(&mAudioBuffer, 0, newLengthInSamples-4096, 0, false, false);
     }
+    
+    delete reader;
+    mPlayHead = 0;
+    
 }
 
 
