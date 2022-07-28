@@ -109,12 +109,12 @@ void RepeatorAudioProcessorEditor::MenuChanged()
     //choose an exisiting file in the menu
     else if(
             //selection is a file
-            mMenu.getSelectedId() - 1 > audioProcessor.mArrSelect.indexOf("noise")
+            mMenu.getSelectedId() - 1 > audioProcessor.mArrSelect.indexOf("beep")
             //selection is not what's currently loaded in mAudioBuffer
             && mMenu.getSelectedId() - 1 != audioProcessor.mArrSelect.indexOf(audioProcessor.mFileName)
             )
     {
-        int idx = mMenu.getSelectedId() - 2 - audioProcessor.mArrSelect.indexOf("noise");
+        int idx = mMenu.getSelectedId() - 2 - audioProcessor.mArrSelect.indexOf("beep");
         if(idx < audioProcessor.mArrPath.size())
         {
             const File file(audioProcessor.mArrPath.getReference(idx));
@@ -128,8 +128,18 @@ void RepeatorAudioProcessorEditor::MenuChanged()
                 audioProcessor.loadFile(reader);
             }
         }
-        
-        
+    }
+    //select "beep"
+    else if(mMenu.getSelectedId() - 1 == audioProcessor.mArrSelect.indexOf("beep"))
+    {
+        InputStream* inputStream = new MemoryInputStream (BinaryData::beep_ogg, BinaryData::beep_oggSize, false);
+        OggVorbisAudioFormat oggAudioFormat;
+        AudioFormatReader* reader = oggAudioFormat.createReaderFor(inputStream, false);
+
+        if (reader != nullptr)
+        {
+            audioProcessor.loadFile(reader);
+        }
     }
 }
 

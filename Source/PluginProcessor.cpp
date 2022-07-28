@@ -259,7 +259,7 @@ void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
         }
     }
     //selection is beyond "noise", play the sample
-    else if(mSelection>mArrSelect.indexOf("beep") && mIsPlay && !mAudioBuffer.hasBeenCleared())
+    else if(mSelection>=mArrSelect.indexOf("beep") && mIsPlay && !mAudioBuffer.hasBeenCleared())
     {
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {
