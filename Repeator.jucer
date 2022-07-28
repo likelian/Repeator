@@ -5,6 +5,9 @@
               companyName="Space Audio" companyWebsite="likelian@me.com" pluginVST3Category="Tools"
               displaySplashScreen="1">
   <MAINGROUP id="I2nTFP" name="Repeator">
+    <GROUP id="{89CBD792-B362-348B-8176-DAD5E6A03E32}" name="Assets">
+      <FILE id="WOdTK0" name="beep.ogg" compile="0" resource="1" file="Assets/beep.ogg"/>
+    </GROUP>
     <GROUP id="{FDC7DD20-6D5D-C827-5F7C-5528C1D06912}" name="Source">
       <FILE id="WRzm3a" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
