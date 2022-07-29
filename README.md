@@ -1,4 +1,6 @@
 # Repeator
 
 
-Download the Mac installer | [download](https://github.com/likelian/Repeator/raw/main/Distribution/Repeator/build/Repeator.pkg)
+Download the installer for Mac | [download](https://github.com/likelian/Repeator/raw/main/Distribution/Repeator/build/Repeator.pkg)
+
+Download the VST3 plugin for Windows | [download](https://github.com/likelian/Repeator/raw/main/Distribution/Repeator.vst3.zip)
