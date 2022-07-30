@@ -1,10 +1,10 @@
 # Repeator
 
-Repeator is an audio plugin that allows you to play a sound repeatedly after a given time. It's designed for adding noise or your copyright statement easily to your track before sending it to the client.
+Repeator is an audio plugin allowing you to play a given sound repeatedly after a period of time. It's designed for quickly adding noise or the copyright statement to your tracks before sending them to the clients.
 
-Watch the demo video ([vimeo](https://vimeo.com/727250430) | [bilibili](https://www.bilibili.com/video/BV1oY4y1E7NP?spm_id_from=333.999.0.0)) of the previous version.
+Watch the demo video ([vimeo](https://vimeo.com/727250430) | [bilibili](https://www.bilibili.com/video/BV1oY4y1E7NP?spm_id_from=333.999.0.0)) of an earlier version.
 
-The current version offers several built-in choices including **silence**, **white noise**, and **sine tone beep**. You can also load any short audio files of your own from the menu "load..." or simply drag and drop the file into the window.
+The current version offers several built-in choices including **silence**, **white noise**, and **sine tone beep**. You can also load any audio files of your own from the menu "load..." or simply drag and drop the file into the window.
 
 
 <p align="center">
