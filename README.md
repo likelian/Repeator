@@ -11,6 +11,6 @@ The current version offers several built-in choices including **silence**, **whi
   <img src="https://raw.githubusercontent.com/likelian/Repeator/main/Images/RepeatorAULogic.png" width=60%/>
 </p>
 
-Download the installer for Mac | [download](https://github.com/likelian/Repeator/raw/main/Distribution/Repeator/build/Repeator.pkg)
+Download for Mac | [download](https://github.com/likelian/Repeator/raw/main/Distribution/Repeator/build/Repeator.pkg)
 
 Download the VST3 plugin for Windows | [download](https://github.com/likelian/Repeator/raw/main/Distribution/Repeator.vst3.zip)
