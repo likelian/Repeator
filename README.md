@@ -6,7 +6,7 @@ Watch the demo video ([vimeo](https://vimeo.com/727250430) | [bilibili](https://
 
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/likelian/Repeator/main/Images/RepeatorAULogic.png" width=65%/>
+  <img src="https://raw.githubusercontent.com/likelian/Repeator/main/Images/RepeatorAULogic.png" width=60%/>
 </p>
 
 Download the installer for Mac | [download](https://github.com/likelian/Repeator/raw/main/Distribution/Repeator/build/Repeator.pkg)
