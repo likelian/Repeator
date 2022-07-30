@@ -4,11 +4,11 @@ Repeator is an audio plugin that allows you to play a sound repeatedly after a g
 
 Watch the demo video ([vimeo](https://vimeo.com/727250430) | [bilibili](https://www.bilibili.com/video/BV1oY4y1E7NP?spm_id_from=333.999.0.0)) of the previous version.
 
-Download the installer for Mac | [download](https://github.com/likelian/Repeator/raw/main/Distribution/Repeator/build/Repeator.pkg)
-
-Download the VST3 plugin for Windows | [download](https://github.com/likelian/Repeator/raw/main/Distribution/Repeator.vst3.zip)
-
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/likelian/Repeator/main/Images/RepeatorAULogic.png" width=65%/>
 </p>
+
+Download the installer for Mac | [download](https://github.com/likelian/Repeator/raw/main/Distribution/Repeator/build/Repeator.pkg)
+
+Download the VST3 plugin for Windows | [download](https://github.com/likelian/Repeator/raw/main/Distribution/Repeator.vst3.zip)
