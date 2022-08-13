@@ -15,6 +15,9 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
 {
     setSize (400, 200);
     
+    //set default font from asset uniocode.ttf
+    LookAndFeel::getDefaultLookAndFeel().setDefaultSansSerifTypeface(Typeface::createSystemTypefaceFor(BinaryData::unicode_ttf, BinaryData::unicode_ttfSize));
+    
     //the order of the following code matters
     
     //==============================================================================
@@ -44,7 +47,8 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
     mPeriodSlider.setRange(1, 60, 1);
 
     addAndMakeVisible (mPeriodSLabel);
-    mPeriodSLabel.setFont (juce::Font (18.0f, juce::Font::bold));
+    mPeriodSLabel.setFont (juce::Font (18.0f));
+    //mPeriodSLabel.setFont (juce::Font (18.0f, juce::Font::bold));
     mPeriodSLabel.setText ("Period", juce::dontSendNotification);
 
     //==============================================================================
@@ -66,6 +70,8 @@ RepeatorAudioProcessorEditor::~RepeatorAudioProcessorEditor()
 void RepeatorAudioProcessorEditor::paint (juce::Graphics& g)
 {
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+    
+    
     
     g.setFont (20);
     g.setColour (juce::Colours::white);

@@ -1,0 +1,8 @@
+language: French
+countries: fr be mc ch lu
+ 
+"bypass" = "contourne"
+"silence" = "silence"
+"noise" = "bruit"
+"beep" = "bip"
+"load..." = "charge..."
