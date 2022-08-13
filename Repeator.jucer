@@ -7,9 +7,9 @@
   <MAINGROUP id="I2nTFP" name="Repeator">
     <GROUP id="{89CBD792-B362-348B-8176-DAD5E6A03E32}" name="Assets">
       <FILE id="pLzr8o" name="french.txt" compile="0" resource="1" file="Assets/french.txt"/>
+      <FILE id="s1wNEI" name="chinese.txt" compile="0" resource="1" file="Assets/chinese.txt"/>
       <FILE id="WOdTK0" name="beep.ogg" compile="0" resource="1" file="Assets/beep.ogg"/>
       <FILE id="kEphJ2" name="unicode.ttf" compile="0" resource="1" file="Assets/unicode.ttf"/>
-      <FILE id="iOV9k0" name="NotoSans.ttf" compile="0" resource="1" file="Assets/NotoSans.ttf"/>
     </GROUP>
     <GROUP id="{FDC7DD20-6D5D-C827-5F7C-5528C1D06912}" name="Source">
       <FILE id="WRzm3a" name="PluginProcessor.cpp" compile="1" resource="0"

@@ -32,13 +32,21 @@ RepeatorAudioProcessor::RepeatorAudioProcessor()
 #endif
 {
     mFormatManager.registerBasicFormats();
+    
     mPresetManager = std::make_unique<PresetManager>(this);
     
-    mArrSelect.add("bypass");
-    mArrSelect.add("silence");
-    mArrSelect.add("noise");
-    mArrSelect.add("beep");
-    mArrSelect.add("load...");
+    //Logger::writeToLog( SystemStats::getUserLanguage());
+    //if(SystemStats::getUserLanguage()=="fr")
+    //{}
+    LocalisedStrings *currentMappings = new             LocalisedStrings(String::createStringFromData(BinaryData::french_txt, BinaryData::french_txtSize), false);
+    
+    juce::LocalisedStrings::setCurrentMappings(currentMappings);
+    
+    mArrSelect.add(TRANS("bypass"));
+    mArrSelect.add(TRANS("silence"));
+    mArrSelect.add(TRANS("noise"));
+    mArrSelect.add(TRANS("beep"));
+    mArrSelect.add(TRANS("load..."));
 }
 
 

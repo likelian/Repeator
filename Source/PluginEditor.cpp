@@ -28,7 +28,7 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
     otherLookAndFeel.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
     mGainSlider.setLookAndFeel(&otherLookAndFeel);
     mGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 70, 20);
-    mGainSlider.setTextValueSuffix(" dB");
+    mGainSlider.setTextValueSuffix(TRANS(" dB"));
     mGainSlider.setNumDecimalPlacesToDisplay(1);
     mGainSlider.setRange(-30.0, 12.0);
 
@@ -42,14 +42,14 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
     mPeriodSlider.setLookAndFeel(&otherLookAndFeel);
     mPeriodSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 70, 20);
     
-    mPeriodSlider.setTextValueSuffix(" s");
+    mPeriodSlider.setTextValueSuffix(TRANS(" s"));
     mPeriodSlider.setNumDecimalPlacesToDisplay(0);
     mPeriodSlider.setRange(1, 60, 1);
 
     addAndMakeVisible (mPeriodSLabel);
     mPeriodSLabel.setFont (juce::Font (18.0f));
     //mPeriodSLabel.setFont (juce::Font (18.0f, juce::Font::bold));
-    mPeriodSLabel.setText ("Period", juce::dontSendNotification);
+    mPeriodSLabel.setText (TRANS("Period"), juce::dontSendNotification);
 
     //==============================================================================
     addAndMakeVisible(mMenu);
@@ -70,8 +70,6 @@ RepeatorAudioProcessorEditor::~RepeatorAudioProcessorEditor()
 void RepeatorAudioProcessorEditor::paint (juce::Graphics& g)
 {
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
-    
-    
     
     g.setFont (20);
     g.setColour (juce::Colours::white);
