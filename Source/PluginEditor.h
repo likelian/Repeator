@@ -36,8 +36,8 @@ private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     RepeatorAudioProcessor& audioProcessor;
-    
     juce::LookAndFeel_V4 otherLookAndFeel;
+    
     
     juce::Slider mGainSlider;
     juce::Slider mPeriodSlider;

@@ -1,0 +1,14 @@
+language: Simplified Chinese
+countries: cn
+ 
+"bypass" = "旁通"
+"silence" = "静音"
+"noise" = "噪音"
+"beep" = "哔声"
+"load..." = "加载..."
+
+" dB" = " 分贝"
+" s" = " 秒"
+"Period" = "周期"
+
+
