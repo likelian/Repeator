@@ -7,7 +7,10 @@
   <MAINGROUP id="I2nTFP" name="Repeator">
     <GROUP id="{89CBD792-B362-348B-8176-DAD5E6A03E32}" name="Assets">
       <FILE id="pLzr8o" name="french.txt" compile="0" resource="1" file="Assets/french.txt"/>
-      <FILE id="s1wNEI" name="chinese.txt" compile="0" resource="1" file="Assets/chinese.txt"/>
+      <FILE id="BIZvbU" name="chinese_simplified.txt" compile="0" resource="1"
+            file="Assets/chinese_simplified.txt"/>
+      <FILE id="dZuap3" name="chinese_tranditional.txt" compile="0" resource="1"
+            file="Assets/chinese_tranditional.txt"/>
       <FILE id="WOdTK0" name="beep.ogg" compile="0" resource="1" file="Assets/beep.ogg"/>
       <FILE id="kEphJ2" name="unicode.ttf" compile="0" resource="1" file="Assets/unicode.ttf"/>
     </GROUP>

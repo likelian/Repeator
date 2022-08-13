@@ -7,6 +7,6 @@ countries: fr be mc ch lu
 "beep" = "bip"
 "load..." = "charge..."
 
-"period" = "période"
+"Period" = "Période"
 
 

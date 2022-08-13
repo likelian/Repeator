@@ -35,12 +35,15 @@ RepeatorAudioProcessor::RepeatorAudioProcessor()
     
     mPresetManager = std::make_unique<PresetManager>(this);
     
-    //Logger::writeToLog( SystemStats::getUserLanguage());
-    //if(SystemStats::getUserLanguage()=="fr")
-    //{}
-    LocalisedStrings *currentMappings = new             LocalisedStrings(String::createStringFromData(BinaryData::french_txt, BinaryData::french_txtSize), false);
+    //set the language
+    //need to sync the language menu selection
+    Logger::writeToLog( SystemStats::getUserLanguage());
+    if(SystemStats::getUserLanguage()=="cn")
+        {
+            LocalisedStrings *currentMappings = new             LocalisedStrings(String::createStringFromData(BinaryData::chinese_simplified_txt, BinaryData::chinese_simplified_txtSize), false);
+            juce::LocalisedStrings::setCurrentMappings(currentMappings);
+        }
     
-    juce::LocalisedStrings::setCurrentMappings(currentMappings);
     
     mArrSelect.add(TRANS("bypass"));
     mArrSelect.add(TRANS("silence"));
@@ -242,7 +245,7 @@ void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
     
-    if(mSelection==mArrSelect.indexOf("silence") && mIsPlay)
+    if(mSelection==mArrSelect.indexOf(TRANS("silence")) && mIsPlay)
     {
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {
@@ -254,7 +257,7 @@ void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             }
         }
     }
-    else if(mSelection==mArrSelect.indexOf("noise") && mIsPlay)
+    else if(mSelection==mArrSelect.indexOf(TRANS("noise")) && mIsPlay)
     {
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {
@@ -267,7 +270,7 @@ void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
         }
     }
     //selection is beyond "noise", play the sample
-    else if(mSelection>=mArrSelect.indexOf("beep") && mIsPlay && !mAudioBuffer.hasBeenCleared())
+    else if(mSelection>=mArrSelect.indexOf(TRANS("beep")) && mIsPlay && !mAudioBuffer.hasBeenCleared())
     {
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {

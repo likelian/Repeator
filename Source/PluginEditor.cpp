@@ -50,6 +50,7 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
     mPeriodSLabel.setFont (juce::Font (18.0f));
     //mPeriodSLabel.setFont (juce::Font (18.0f, juce::Font::bold));
     mPeriodSLabel.setText (TRANS("Period"), juce::dontSendNotification);
+    mPeriodSLabel.setJustificationType (juce::Justification::centred);
 
     //==============================================================================
     addAndMakeVisible(mMenu);
@@ -95,7 +96,7 @@ void RepeatorAudioProcessorEditor::MenuChanged()
     mPreSelection = audioProcessor.mSelection;
     audioProcessor.mSelection = mMenu.getSelectedId() - 1;
     
-    if(mMenu.getSelectedId() - 1 == audioProcessor.mArrSelect.indexOf("load..."))
+    if(mMenu.getSelectedId() - 1 == audioProcessor.mArrSelect.indexOf(TRANS("load...")))
     {
         audioProcessor.mChooser = std::make_unique<FileChooser> ("Please select the audio file you want to load...",
                                                                  juce::File{},
@@ -113,12 +114,12 @@ void RepeatorAudioProcessorEditor::MenuChanged()
     //choose an exisiting file in the menu
     else if(
             //selection is a file
-            mMenu.getSelectedId() - 1 > audioProcessor.mArrSelect.indexOf("beep")
+            mMenu.getSelectedId() - 1 > audioProcessor.mArrSelect.indexOf(TRANS("beep"))
             //selection is not what's currently loaded in mAudioBuffer
             && mMenu.getSelectedId() - 1 != audioProcessor.mArrSelect.indexOf(audioProcessor.mFileName)
             )
     {
-        int idx = mMenu.getSelectedId() - 2 - audioProcessor.mArrSelect.indexOf("beep");
+        int idx = mMenu.getSelectedId() - 2 - audioProcessor.mArrSelect.indexOf(TRANS("beep"));
         if(idx < audioProcessor.mArrPath.size())
         {
             const File file(audioProcessor.mArrPath.getReference(idx));
@@ -134,12 +135,13 @@ void RepeatorAudioProcessorEditor::MenuChanged()
         }
     }
     //select "beep"
-    else if(mMenu.getSelectedId() - 1 == audioProcessor.mArrSelect.indexOf("beep"))
+    else if(mMenu.getSelectedId() - 1 == audioProcessor.mArrSelect.indexOf(TRANS("beep")))
     {
         InputStream* inputStream = new MemoryInputStream (BinaryData::beep_ogg, BinaryData::beep_oggSize, false);
         OggVorbisAudioFormat oggAudioFormat;
         AudioFormatReader* reader = oggAudioFormat.createReaderFor(inputStream, false);
-
+        delete inputStream;
+ 
         if (reader != nullptr)
         {
             audioProcessor.loadFile(reader);
@@ -173,7 +175,7 @@ void RepeatorAudioProcessorEditor::EditorLoadFile(File file)
         
         audioProcessor.mArrPath.add(file.getFullPathName());
         //indexOf("load...") is the current new file's index
-        mMenu.setSelectedId(audioProcessor.mArrSelect.indexOf("load..."));
+        mMenu.setSelectedId(audioProcessor.mArrSelect.indexOf(TRANS("load...")));
     }
     else //loading cancelled or unsuccessful
     {
