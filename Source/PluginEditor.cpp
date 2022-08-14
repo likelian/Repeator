@@ -69,6 +69,7 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
 
 RepeatorAudioProcessorEditor::~RepeatorAudioProcessorEditor()
 {
+    mLanguageMenu.setLookAndFeel(nullptr);
 }
 
 //==============================================================================
@@ -80,6 +81,9 @@ void RepeatorAudioProcessorEditor::paint (juce::Graphics& g)
     g.setFont (20);
     g.setColour (juce::Colours::white);
     g.drawText ("Repeator", 150, 0, 100, 50, juce::Justification::centred);
+    
+    Image languageIcon = ImageFileFormat::loadFrom(BinaryData::languageicon_png, BinaryData::languageicon_pngSize);
+    g.drawImageAt(languageIcon, 375, 5, false);
 }
 
 

@@ -6,6 +6,8 @@
               displaySplashScreen="1">
   <MAINGROUP id="I2nTFP" name="Repeator">
     <GROUP id="{89CBD792-B362-348B-8176-DAD5E6A03E32}" name="Assets">
+      <FILE id="NB8fFC" name="language-icon.png" compile="0" resource="1"
+            file="Assets/language-icon.png"/>
       <FILE id="SYUw1Z" name="beep.ogg" compile="0" resource="1" file="Assets/beep.ogg"/>
       <FILE id="vVrkuz" name="english.txt" compile="0" resource="1" file="Assets/english.txt"/>
       <FILE id="pLzr8o" name="french.txt" compile="0" resource="1" file="Assets/french.txt"/>
@@ -18,7 +20,6 @@
     <GROUP id="{FDC7DD20-6D5D-C827-5F7C-5528C1D06912}" name="Source">
       <FILE id="mpO0df" name="ComboNoArrowLookAndFeel.h" compile="0" resource="0"
             file="Source/ComboNoArrowLookAndFeel.h"/>
-      <FILE id="GNXAnt" name="ComboNoArrow.h" compile="0" resource="0" file="Source/ComboNoArrow.h"/>
       <FILE id="WRzm3a" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="QGug47" name="PluginProcessor.h" compile="0" resource="0"
