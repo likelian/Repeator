@@ -58,15 +58,21 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
     mMenu.onChange = [this] { MenuChanged(); };
     
     //==============================================================================
+    
+    mLanguageMenu.setLookAndFeel(&mComboNoArrowLookAndFeel);
     addAndMakeVisible(mLanguageMenu);
     mLanguageMenu.addItemList(audioProcessor.mArrLanguage, 1);
     mLanguageMenu.setSelectedId(audioProcessor.mLanguage + 1);
     mLanguageMenu.onChange = [this] { LanguageChanged(); };
+    
+    
+    
 }
 
 
 RepeatorAudioProcessorEditor::~RepeatorAudioProcessorEditor()
 {
+    mLanguageMenu.setLookAndFeel(nullptr);
 }
 
 //==============================================================================
@@ -78,6 +84,24 @@ void RepeatorAudioProcessorEditor::paint (juce::Graphics& g)
     g.setFont (20);
     g.setColour (juce::Colours::white);
     g.drawText ("Repeator", 150, 0, 100, 50, juce::Justification::centred);
+    
+    
+    
+    
+    
+    
+//    std::unique_ptr<Drawable> languageIcon = Drawable::createFromImageData (BinaryData::languageicon_svg, BinaryData::languageicon_svgSize);
+//    languageIcon->drawAt(g, 2, 2, 1.f);
+//    
+//    Rectangle<float> boxBoundsFloat (0.f, 0.f, 20.f, 20.f);
+//    //languageIcon->drawAt(g, 2, 2, 1.f);
+//    languageIcon->drawWithin(g, boxBoundsFloat, juce::RectanglePlacement::centred, 1.f);
+//    
+    
+    
+    
+    
+    
 }
 
 
@@ -87,7 +111,7 @@ void RepeatorAudioProcessorEditor::resized()
     mPeriodSlider.setBounds(125, 40, 150, 150);
     mPeriodSLabel.setBounds(175, 92, 50, 20);
     mMenu.setBounds(10, 90, 100, 25);
-    mLanguageMenu.setBounds(375, 0, 30, 25);
+    mLanguageMenu.setBounds(370, 5, 25, 25);
 }
 
 //==============================================================================
@@ -232,7 +256,5 @@ void RepeatorAudioProcessorEditor::LanguageChanged()
     mMenu.addItemList(audioProcessor.mArrSelect, 1);
     mMenu.setSelectedId(audioProcessor.mSelection + 1);
     mMenu.onChange = [this] { MenuChanged(); };
-    
-    //Calling paint() to refresh GUI
-    //this->repaint();
+
 }

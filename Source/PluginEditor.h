@@ -11,6 +11,8 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 
+#include "ComboNoArrowLookAndFeel.h"
+
 //==============================================================================
 /**
 */
@@ -44,6 +46,7 @@ private:
     juce::Label  mPeriodSLabel;
     juce::ComboBox mMenu;
     juce::ComboBox mLanguageMenu;
+    ComboNoArrowLookAndFeel mComboNoArrowLookAndFeel;
     
     int mPreSelection;
     
