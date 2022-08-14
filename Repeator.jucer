@@ -6,6 +6,7 @@
               displaySplashScreen="1">
   <MAINGROUP id="I2nTFP" name="Repeator">
     <GROUP id="{89CBD792-B362-348B-8176-DAD5E6A03E32}" name="Assets">
+      <FILE id="vVrkuz" name="english.txt" compile="0" resource="1" file="Assets/english.txt"/>
       <FILE id="pLzr8o" name="french.txt" compile="0" resource="1" file="Assets/french.txt"/>
       <FILE id="BIZvbU" name="chinese_simplified.txt" compile="0" resource="1"
             file="Assets/chinese_simplified.txt"/>

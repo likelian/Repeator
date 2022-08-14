@@ -37,12 +37,16 @@ RepeatorAudioProcessor::RepeatorAudioProcessor()
     
     //set the language
     //need to sync the language menu selection
-    Logger::writeToLog( SystemStats::getUserLanguage());
-    if(SystemStats::getUserLanguage()=="cn")
-        {
-            LocalisedStrings *currentMappings = new             LocalisedStrings(String::createStringFromData(BinaryData::chinese_simplified_txt, BinaryData::chinese_simplified_txtSize), false);
-            juce::LocalisedStrings::setCurrentMappings(currentMappings);
-        }
+
+    
+    LocalisedStrings *currentMappings = new             LocalisedStrings(String::createStringFromData(BinaryData::english_txt, BinaryData::english_txtSize), false);
+    juce::LocalisedStrings::setCurrentMappings(currentMappings);
+    
+    
+    mArrLanguage.add("English");
+    mArrLanguage.add(TRANS("French"));
+    mArrLanguage.add(TRANS("SimplifiedChinese"));
+    mArrLanguage.add(TRANS("TraditionalChinese"));
     
     
     mArrSelect.add(TRANS("bypass"));

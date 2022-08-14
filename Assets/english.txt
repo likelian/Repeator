@@ -1,0 +1,7 @@
+language: English
+countries: us uk
+
+
+"French" = "Français"
+"SimplifiedChinese" = "简体中文"
+"TraditionalChinese" = "繁体中文"

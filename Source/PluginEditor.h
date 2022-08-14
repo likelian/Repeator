@@ -43,6 +43,7 @@ private:
     juce::Slider mPeriodSlider;
     juce::Label  mPeriodSLabel;
     juce::ComboBox mMenu;
+    juce::ComboBox mLanguageMenu;
     
     int mPreSelection;
     

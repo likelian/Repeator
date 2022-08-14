@@ -59,6 +59,9 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
     mMenu.setSelectedId(audioProcessor.mSelection + 1);
     mMenu.onChange = [this] { MenuChanged(); };
     
+    //==============================================================================
+    addAndMakeVisible(mLanguageMenu);
+    mLanguageMenu.addItemList(audioProcessor.mArrLanguage, 1);
 }
 
 
@@ -84,6 +87,7 @@ void RepeatorAudioProcessorEditor::resized()
     mPeriodSlider.setBounds(125, 40, 150, 150);
     mPeriodSLabel.setBounds(175, 92, 50, 20);
     mMenu.setBounds(10, 90, 100, 25);
+    mLanguageMenu.setBounds(375, 0, 30, 25);
 }
 
 //==============================================================================
