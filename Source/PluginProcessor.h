@@ -90,7 +90,12 @@ public:
     AudioFormatManager mFormatManager;
 
     StringArray mArrSelect;
+    StringArray mArrSelectOriginal;
     StringArray mArrPath;
+    
+    //==============================================================================
+    StringArray mArrLanguage;
+    int mLanguage = 0;
     
     //==============================================================================
     PresetManager* getPresetManager();

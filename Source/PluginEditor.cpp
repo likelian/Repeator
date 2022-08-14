@@ -28,8 +28,8 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
     otherLookAndFeel.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
     mGainSlider.setLookAndFeel(&otherLookAndFeel);
     mGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 70, 20);
-    mGainSlider.setTextValueSuffix(TRANS(" dB"));
     mGainSlider.setNumDecimalPlacesToDisplay(1);
+    mGainSlider.setTextValueSuffix(TRANS(" dB"));
     mGainSlider.setRange(-30.0, 12.0);
 
     
@@ -41,26 +41,28 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
     otherLookAndFeel.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
     mPeriodSlider.setLookAndFeel(&otherLookAndFeel);
     mPeriodSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 70, 20);
-    
-    mPeriodSlider.setTextValueSuffix(TRANS(" s"));
     mPeriodSlider.setNumDecimalPlacesToDisplay(0);
+    mPeriodSlider.setTextValueSuffix(TRANS(" s"));
     mPeriodSlider.setRange(1, 60, 1);
-
+    
     addAndMakeVisible (mPeriodSLabel);
     mPeriodSLabel.setFont (juce::Font (18.0f));
-    //mPeriodSLabel.setFont (juce::Font (18.0f, juce::Font::bold));
-    mPeriodSLabel.setText (TRANS("Period"), juce::dontSendNotification);
     mPeriodSLabel.setJustificationType (juce::Justification::centred);
+    mPeriodSLabel.setText (TRANS("Period"), juce::dontSendNotification);
+
 
     //==============================================================================
     addAndMakeVisible(mMenu);
     mMenu.addItemList(audioProcessor.mArrSelect, 1);
-    
     mMenu.setSelectedId(audioProcessor.mSelection + 1);
     mMenu.onChange = [this] { MenuChanged(); };
     
+    //==============================================================================
+    addAndMakeVisible(mLanguageMenu);
+    mLanguageMenu.addItemList(audioProcessor.mArrLanguage, 1);
+    mLanguageMenu.setSelectedId(audioProcessor.mLanguage + 1);
+    mLanguageMenu.onChange = [this] { LanguageChanged(); };
 }
-
 
 
 RepeatorAudioProcessorEditor::~RepeatorAudioProcessorEditor()
@@ -70,6 +72,7 @@ RepeatorAudioProcessorEditor::~RepeatorAudioProcessorEditor()
 //==============================================================================
 void RepeatorAudioProcessorEditor::paint (juce::Graphics& g)
 {
+    
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
     
     g.setFont (20);
@@ -84,6 +87,7 @@ void RepeatorAudioProcessorEditor::resized()
     mPeriodSlider.setBounds(125, 40, 150, 150);
     mPeriodSLabel.setBounds(175, 92, 50, 20);
     mMenu.setBounds(10, 90, 100, 25);
+    mLanguageMenu.setBounds(375, 0, 30, 25);
 }
 
 //==============================================================================
@@ -95,7 +99,7 @@ void RepeatorAudioProcessorEditor::MenuChanged()
     //getSelectedId starts at 1, and selection list starts at 0
     mPreSelection = audioProcessor.mSelection;
     audioProcessor.mSelection = mMenu.getSelectedId() - 1;
-    
+    //select "load..."
     if(mMenu.getSelectedId() - 1 == audioProcessor.mArrSelect.indexOf(TRANS("load...")))
     {
         audioProcessor.mChooser = std::make_unique<FileChooser> ("Please select the audio file you want to load...",
@@ -114,16 +118,13 @@ void RepeatorAudioProcessorEditor::MenuChanged()
     //choose an exisiting file in the menu
     else if(
             //selection is a file
-            mMenu.getSelectedId() - 1 > audioProcessor.mArrSelect.indexOf(TRANS("beep"))
-            //selection is not what's currently loaded in mAudioBuffer
-            && mMenu.getSelectedId() - 1 != audioProcessor.mArrSelect.indexOf(audioProcessor.mFileName)
+            mMenu.getSelectedId() - 1 > audioProcessor.mArrSelectOriginal.indexOf("beep")
             )
     {
-        int idx = mMenu.getSelectedId() - 2 - audioProcessor.mArrSelect.indexOf(TRANS("beep"));
+        int idx = mMenu.getSelectedId() - 2 - audioProcessor.mArrSelectOriginal.indexOf("beep");
         if(idx < audioProcessor.mArrPath.size())
         {
             const File file(audioProcessor.mArrPath.getReference(idx));
-            
             
             AudioFormatReader* reader = audioProcessor.mFormatManager.createReaderFor(file);
             
@@ -135,17 +136,17 @@ void RepeatorAudioProcessorEditor::MenuChanged()
         }
     }
     //select "beep"
-    else if(mMenu.getSelectedId() - 1 == audioProcessor.mArrSelect.indexOf(TRANS("beep")))
+    else if(mMenu.getSelectedId() - 1 == audioProcessor.mArrSelectOriginal.indexOf("beep"))
     {
         InputStream* inputStream = new MemoryInputStream (BinaryData::beep_ogg, BinaryData::beep_oggSize, false);
         OggVorbisAudioFormat oggAudioFormat;
         AudioFormatReader* reader = oggAudioFormat.createReaderFor(inputStream, false);
-        delete inputStream;
  
         if (reader != nullptr)
         {
             audioProcessor.loadFile(reader);
         }
+        
     }
 }
 
@@ -157,8 +158,7 @@ void RepeatorAudioProcessorEditor::filesDropped(const StringArray& files, int, i
     EditorLoadFile(file);
 }
 
-
-//change the name, like "add file"
+    
 void RepeatorAudioProcessorEditor::EditorLoadFile(File file)
 {
     AudioFormatReader* reader = audioProcessor.mFormatManager.createReaderFor(file);
@@ -182,4 +182,57 @@ void RepeatorAudioProcessorEditor::EditorLoadFile(File file)
         audioProcessor.mSelection = mPreSelection;
         mMenu.setSelectedId(mPreSelection + 1);
     }
+}
+
+
+
+//==============================================================================
+void RepeatorAudioProcessorEditor::LanguageChanged()
+{
+    
+    audioProcessor.mLanguage = mLanguageMenu.getSelectedId() - 1;
+    
+    if(mLanguageMenu.getSelectedId() - 1 == audioProcessor.mArrLanguage.indexOf("English"))
+    {
+        LocalisedStrings *currentMappings = new             LocalisedStrings(String::createStringFromData(BinaryData::english_txt, BinaryData::english_txtSize), false);
+        juce::LocalisedStrings::setCurrentMappings(currentMappings);
+    }
+    else if (mLanguageMenu.getSelectedId() - 1 == audioProcessor.mArrLanguage.indexOf(TRANS("French")))
+    {
+        LocalisedStrings *currentMappings = new             LocalisedStrings(String::createStringFromData(BinaryData::french_txt, BinaryData::french_txtSize), false);
+        juce::LocalisedStrings::setCurrentMappings(currentMappings);
+    }
+    else if(mLanguageMenu.getSelectedId() - 1 == audioProcessor.mArrLanguage.indexOf(TRANS("SimplifiedChinese")))
+    {
+        LocalisedStrings *currentMappings = new             LocalisedStrings(String::createStringFromData(BinaryData::chinese_simplified_txt, BinaryData::chinese_simplified_txtSize), false);
+        juce::LocalisedStrings::setCurrentMappings(currentMappings);
+    }
+    else if (mLanguageMenu.getSelectedId() - 1 == audioProcessor.mArrLanguage.indexOf(TRANS("TraditionalChinese")))
+    {
+        LocalisedStrings *currentMappings = new             LocalisedStrings(String::createStringFromData(BinaryData::chinese_traditional_txt, BinaryData::chinese_traditional_txtSize), false);
+        juce::LocalisedStrings::setCurrentMappings(currentMappings);
+    }
+    
+    //update the language in mArrSelect of the first 4 selections
+    for (int i = 0; i < audioProcessor.mArrSelectOriginal.size()-1; i++)
+    {
+        audioProcessor.mArrSelect.set(i, TRANS(audioProcessor.mArrSelectOriginal[i]));
+    }
+    //update the last selection "load..." which could be pushed towards the end of the list
+    audioProcessor.mArrSelect.set(audioProcessor.mArrSelect.size()-1, TRANS(audioProcessor.mArrSelectOriginal[audioProcessor.mArrSelectOriginal.size()-1]));
+    
+    
+    mPeriodSlider.setTextValueSuffix(TRANS(" s"));
+    
+    mGainSlider.setTextValueSuffix(TRANS(" dB"));
+    
+    mPeriodSLabel.setText (TRANS("Period"), juce::dontSendNotification);
+    
+    mMenu.clear();
+    mMenu.addItemList(audioProcessor.mArrSelect, 1);
+    mMenu.setSelectedId(audioProcessor.mSelection + 1);
+    mMenu.onChange = [this] { MenuChanged(); };
+    
+    //Calling paint() to refresh GUI
+    //this->repaint();
 }

@@ -43,10 +43,12 @@ private:
     juce::Slider mPeriodSlider;
     juce::Label  mPeriodSLabel;
     juce::ComboBox mMenu;
+    juce::ComboBox mLanguageMenu;
     
     int mPreSelection;
     
     void MenuChanged();
+    void LanguageChanged();
     
     void EditorLoadFile(File file);
     
