@@ -16,6 +16,9 @@
       <FILE id="kEphJ2" name="unicode.ttf" compile="0" resource="1" file="Assets/unicode.ttf"/>
     </GROUP>
     <GROUP id="{FDC7DD20-6D5D-C827-5F7C-5528C1D06912}" name="Source">
+      <FILE id="mpO0df" name="ComboNoArrowLookAndFeel.h" compile="0" resource="0"
+            file="Source/ComboNoArrowLookAndFeel.h"/>
+      <FILE id="GNXAnt" name="ComboNoArrow.h" compile="0" resource="0" file="Source/ComboNoArrow.h"/>
       <FILE id="WRzm3a" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="QGug47" name="PluginProcessor.h" compile="0" resource="0"

@@ -11,6 +11,8 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 
+#include "ComboNoArrowLookAndFeel.h""
+
 //==============================================================================
 /**
 */
@@ -37,6 +39,7 @@ private:
     // access the processor object that created it.
     RepeatorAudioProcessor& audioProcessor;
     juce::LookAndFeel_V4 otherLookAndFeel;
+    ComboNoArrowLookAndFeel mComboNoArrowLookAndFeel;
     
     
     juce::Slider mGainSlider;
