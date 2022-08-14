@@ -24,6 +24,14 @@ public:
         
         g.setColour (box.findColour (ComboBox::outlineColourId));
         g.drawRoundedRectangle (boxBounds.toFloat().reduced (0.5f, 0.5f), cornerSize, 1.0f);
+        
+        
+        
+        Rectangle<float> boxBoundsFloat ((float)width*0.15, (float)width*0.15, (float)width*0.7, (float)width*0.7);
+        
+        std::unique_ptr<Drawable> languageIcon = Drawable::createFromImageData (BinaryData::languageicon_svg, BinaryData::languageicon_svgSize);
+        languageIcon->drawWithin(g, boxBoundsFloat, juce::RectanglePlacement::centred, 0.8f);
+        
     }
 };
 

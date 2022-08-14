@@ -64,6 +64,9 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
     mLanguageMenu.addItemList(audioProcessor.mArrLanguage, 1);
     mLanguageMenu.setSelectedId(audioProcessor.mLanguage + 1);
     mLanguageMenu.onChange = [this] { LanguageChanged(); };
+    
+    
+    
 }
 
 
@@ -82,8 +85,23 @@ void RepeatorAudioProcessorEditor::paint (juce::Graphics& g)
     g.setColour (juce::Colours::white);
     g.drawText ("Repeator", 150, 0, 100, 50, juce::Justification::centred);
     
-    Image languageIcon = ImageFileFormat::loadFrom(BinaryData::languageicon_png, BinaryData::languageicon_pngSize);
-    g.drawImageAt(languageIcon, 375, 5, false);
+    
+    
+    
+    
+    
+//    std::unique_ptr<Drawable> languageIcon = Drawable::createFromImageData (BinaryData::languageicon_svg, BinaryData::languageicon_svgSize);
+//    languageIcon->drawAt(g, 2, 2, 1.f);
+//    
+//    Rectangle<float> boxBoundsFloat (0.f, 0.f, 20.f, 20.f);
+//    //languageIcon->drawAt(g, 2, 2, 1.f);
+//    languageIcon->drawWithin(g, boxBoundsFloat, juce::RectanglePlacement::centred, 1.f);
+//    
+    
+    
+    
+    
+    
 }
 
 
@@ -93,7 +111,7 @@ void RepeatorAudioProcessorEditor::resized()
     mPeriodSlider.setBounds(125, 40, 150, 150);
     mPeriodSLabel.setBounds(175, 92, 50, 20);
     mMenu.setBounds(10, 90, 100, 25);
-    mLanguageMenu.setBounds(375, 5, 20, 20);
+    mLanguageMenu.setBounds(370, 5, 25, 25);
 }
 
 //==============================================================================
