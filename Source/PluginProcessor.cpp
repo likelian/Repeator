@@ -35,10 +35,7 @@ RepeatorAudioProcessor::RepeatorAudioProcessor()
     
     mPresetManager = std::make_unique<PresetManager>(this);
     
-    //set the language
-    //need to sync the language menu selection
-
-    
+    //Set the language of language menu. The rest text will be updated again.
     LocalisedStrings *currentMappings = new             LocalisedStrings(String::createStringFromData(BinaryData::english_txt, BinaryData::english_txtSize), false);
     juce::LocalisedStrings::setCurrentMappings(currentMappings);
     
@@ -49,11 +46,14 @@ RepeatorAudioProcessor::RepeatorAudioProcessor()
     mArrLanguage.add(TRANS("TraditionalChinese"));
     
     
-    mArrSelect.add(TRANS("bypass"));
-    mArrSelect.add(TRANS("silence"));
-    mArrSelect.add(TRANS("noise"));
-    mArrSelect.add(TRANS("beep"));
-    mArrSelect.add(TRANS("load..."));
+    mArrSelect.add("bypass");
+    mArrSelect.add("silence");
+    mArrSelect.add("noise");
+    mArrSelect.add("beep");
+    mArrSelect.add("load...");
+    
+    //Deep copy the English text into Original as the reference of translation.
+    mArrSelectOriginal = mArrSelect;
 }
 
 

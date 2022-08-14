@@ -29,6 +29,7 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
     mGainSlider.setLookAndFeel(&otherLookAndFeel);
     mGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 70, 20);
     mGainSlider.setNumDecimalPlacesToDisplay(1);
+    mGainSlider.setTextValueSuffix(TRANS(" dB"));
     mGainSlider.setRange(-30.0, 12.0);
 
     
@@ -41,11 +42,13 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
     mPeriodSlider.setLookAndFeel(&otherLookAndFeel);
     mPeriodSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 70, 20);
     mPeriodSlider.setNumDecimalPlacesToDisplay(0);
+    mPeriodSlider.setTextValueSuffix(TRANS(" s"));
     mPeriodSlider.setRange(1, 60, 1);
     
     addAndMakeVisible (mPeriodSLabel);
     mPeriodSLabel.setFont (juce::Font (18.0f));
     mPeriodSLabel.setJustificationType (juce::Justification::centred);
+    mPeriodSLabel.setText (TRANS("Period"), juce::dontSendNotification);
 
 
     //==============================================================================
@@ -75,14 +78,6 @@ void RepeatorAudioProcessorEditor::paint (juce::Graphics& g)
     g.setFont (20);
     g.setColour (juce::Colours::white);
     g.drawText ("Repeator", 150, 0, 100, 50, juce::Justification::centred);
-    
-    
-    mPeriodSlider.setTextValueSuffix(TRANS(" s"));
-    
-    mGainSlider.setTextValueSuffix(TRANS(" dB"));
-    
-    mPeriodSLabel.setText (TRANS("Period"), juce::dontSendNotification);
-    
 }
 
 
@@ -104,7 +99,7 @@ void RepeatorAudioProcessorEditor::MenuChanged()
     //getSelectedId starts at 1, and selection list starts at 0
     mPreSelection = audioProcessor.mSelection;
     audioProcessor.mSelection = mMenu.getSelectedId() - 1;
-    
+    //select "load..."
     if(mMenu.getSelectedId() - 1 == audioProcessor.mArrSelect.indexOf(TRANS("load...")))
     {
         audioProcessor.mChooser = std::make_unique<FileChooser> ("Please select the audio file you want to load...",
@@ -123,12 +118,12 @@ void RepeatorAudioProcessorEditor::MenuChanged()
     //choose an exisiting file in the menu
     else if(
             //selection is a file
-            mMenu.getSelectedId() - 1 > audioProcessor.mArrSelect.indexOf(TRANS("beep"))
+            mMenu.getSelectedId() - 1 > audioProcessor.mArrSelectOriginal.indexOf("beep")
             //selection is not what's currently loaded in mAudioBuffer
             && mMenu.getSelectedId() - 1 != audioProcessor.mArrSelect.indexOf(audioProcessor.mFileName)
             )
     {
-        int idx = mMenu.getSelectedId() - 2 - audioProcessor.mArrSelect.indexOf(TRANS("beep"));
+        int idx = mMenu.getSelectedId() - 2 - audioProcessor.mArrSelectOriginal.indexOf("beep");
         if(idx < audioProcessor.mArrPath.size())
         {
             const File file(audioProcessor.mArrPath.getReference(idx));
@@ -144,17 +139,17 @@ void RepeatorAudioProcessorEditor::MenuChanged()
         }
     }
     //select "beep"
-    else if(mMenu.getSelectedId() - 1 == audioProcessor.mArrSelect.indexOf(TRANS("beep")))
+    else if(mMenu.getSelectedId() - 1 == audioProcessor.mArrSelectOriginal.indexOf("beep"))
     {
         InputStream* inputStream = new MemoryInputStream (BinaryData::beep_ogg, BinaryData::beep_oggSize, false);
         OggVorbisAudioFormat oggAudioFormat;
         AudioFormatReader* reader = oggAudioFormat.createReaderFor(inputStream, false);
-        delete inputStream;
  
         if (reader != nullptr)
         {
             audioProcessor.loadFile(reader);
         }
+        
     }
 }
 
@@ -166,8 +161,7 @@ void RepeatorAudioProcessorEditor::filesDropped(const StringArray& files, int, i
     EditorLoadFile(file);
 }
 
-
-//change the name, like "add file"
+    
 void RepeatorAudioProcessorEditor::EditorLoadFile(File file)
 {
     AudioFormatReader* reader = audioProcessor.mFormatManager.createReaderFor(file);
@@ -222,6 +216,24 @@ void RepeatorAudioProcessorEditor::LanguageChanged()
         juce::LocalisedStrings::setCurrentMappings(currentMappings);
     }
     
-    //refresh GUI, call paint()
-    this->repaint();
+    //update the language in mArrSelect
+    for (int i = 0; i < audioProcessor.mArrSelectOriginal.size(); i++)
+    {
+        audioProcessor.mArrSelect.set(i, TRANS(audioProcessor.mArrSelectOriginal[i]));
+    }
+    
+    
+    mPeriodSlider.setTextValueSuffix(TRANS(" s"));
+    
+    mGainSlider.setTextValueSuffix(TRANS(" dB"));
+    
+    mPeriodSLabel.setText (TRANS("Period"), juce::dontSendNotification);
+    
+    mMenu.clear();
+    mMenu.addItemList(audioProcessor.mArrSelect, 1);
+    mMenu.setSelectedId(audioProcessor.mSelection + 1);
+    mMenu.onChange = [this] { MenuChanged(); };
+    
+    //Calling paint() to refresh GUI
+    //this->repaint();
 }

@@ -90,6 +90,7 @@ public:
     AudioFormatManager mFormatManager;
 
     StringArray mArrSelect;
+    StringArray mArrSelectOriginal;
     StringArray mArrPath;
     
     //==============================================================================
