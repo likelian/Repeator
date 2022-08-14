@@ -119,15 +119,12 @@ void RepeatorAudioProcessorEditor::MenuChanged()
     else if(
             //selection is a file
             mMenu.getSelectedId() - 1 > audioProcessor.mArrSelectOriginal.indexOf("beep")
-            //selection is not what's currently loaded in mAudioBuffer
-            && mMenu.getSelectedId() - 1 != audioProcessor.mArrSelect.indexOf(audioProcessor.mFileName)
             )
     {
         int idx = mMenu.getSelectedId() - 2 - audioProcessor.mArrSelectOriginal.indexOf("beep");
         if(idx < audioProcessor.mArrPath.size())
         {
             const File file(audioProcessor.mArrPath.getReference(idx));
-            
             
             AudioFormatReader* reader = audioProcessor.mFormatManager.createReaderFor(file);
             
@@ -216,11 +213,13 @@ void RepeatorAudioProcessorEditor::LanguageChanged()
         juce::LocalisedStrings::setCurrentMappings(currentMappings);
     }
     
-    //update the language in mArrSelect
-    for (int i = 0; i < audioProcessor.mArrSelectOriginal.size(); i++)
+    //update the language in mArrSelect of the first 4 selections
+    for (int i = 0; i < audioProcessor.mArrSelectOriginal.size()-1; i++)
     {
         audioProcessor.mArrSelect.set(i, TRANS(audioProcessor.mArrSelectOriginal[i]));
     }
+    //update the last selection "load..." which could be pushed towards the end of the list
+    audioProcessor.mArrSelect.set(audioProcessor.mArrSelect.size()-1, TRANS(audioProcessor.mArrSelectOriginal[audioProcessor.mArrSelectOriginal.size()-1]));
     
     
     mPeriodSlider.setTextValueSuffix(TRANS(" s"));
