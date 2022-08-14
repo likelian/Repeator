@@ -1,6 +1,13 @@
 language: English
 countries: us uk
 
+"bypass" = "bypass"
+"silence" = "silence"
+"noise" = "noise"
+"beep" = "beep"
+"load..." = "load..."
+
+"Period" = "Period"
 
 "French" = "Français"
 "SimplifiedChinese" = "简体中文"

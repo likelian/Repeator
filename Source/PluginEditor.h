@@ -48,6 +48,7 @@ private:
     int mPreSelection;
     
     void MenuChanged();
+    void LanguageChanged();
     
     void EditorLoadFile(File file);
     

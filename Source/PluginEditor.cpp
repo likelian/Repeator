@@ -28,7 +28,7 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
     otherLookAndFeel.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
     mGainSlider.setLookAndFeel(&otherLookAndFeel);
     mGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 70, 20);
-    mGainSlider.setTextValueSuffix(TRANS(" dB"));
+    //mGainSlider.setTextValueSuffix(TRANS(" dB"));
     mGainSlider.setNumDecimalPlacesToDisplay(1);
     mGainSlider.setRange(-30.0, 12.0);
 
@@ -42,26 +42,27 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
     mPeriodSlider.setLookAndFeel(&otherLookAndFeel);
     mPeriodSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 70, 20);
     
-    mPeriodSlider.setTextValueSuffix(TRANS(" s"));
+    //mPeriodSlider.setTextValueSuffix(TRANS(" s"));
     mPeriodSlider.setNumDecimalPlacesToDisplay(0);
     mPeriodSlider.setRange(1, 60, 1);
-
+    
     addAndMakeVisible (mPeriodSLabel);
     mPeriodSLabel.setFont (juce::Font (18.0f));
     //mPeriodSLabel.setFont (juce::Font (18.0f, juce::Font::bold));
-    mPeriodSLabel.setText (TRANS("Period"), juce::dontSendNotification);
     mPeriodSLabel.setJustificationType (juce::Justification::centred);
+
 
     //==============================================================================
     addAndMakeVisible(mMenu);
     mMenu.addItemList(audioProcessor.mArrSelect, 1);
-    
     mMenu.setSelectedId(audioProcessor.mSelection + 1);
     mMenu.onChange = [this] { MenuChanged(); };
     
     //==============================================================================
     addAndMakeVisible(mLanguageMenu);
     mLanguageMenu.addItemList(audioProcessor.mArrLanguage, 1);
+    mLanguageMenu.setSelectedId(audioProcessor.mLanguage + 1);
+    mLanguageMenu.onChange = [this] { LanguageChanged(); };
 }
 
 
@@ -73,11 +74,20 @@ RepeatorAudioProcessorEditor::~RepeatorAudioProcessorEditor()
 //==============================================================================
 void RepeatorAudioProcessorEditor::paint (juce::Graphics& g)
 {
+    
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
     
     g.setFont (20);
     g.setColour (juce::Colours::white);
     g.drawText ("Repeator", 150, 0, 100, 50, juce::Justification::centred);
+    
+    
+    mPeriodSlider.setTextValueSuffix(TRANS(" s"));
+    
+    mGainSlider.setTextValueSuffix(TRANS(" dB"));
+    
+    mPeriodSLabel.setText (TRANS("Period"), juce::dontSendNotification);
+    
 }
 
 
@@ -186,4 +196,39 @@ void RepeatorAudioProcessorEditor::EditorLoadFile(File file)
         audioProcessor.mSelection = mPreSelection;
         mMenu.setSelectedId(mPreSelection + 1);
     }
+}
+
+
+
+//==============================================================================
+void RepeatorAudioProcessorEditor::LanguageChanged()
+{
+    
+    audioProcessor.mLanguage = mLanguageMenu.getSelectedId() - 1;
+    
+    if(mLanguageMenu.getSelectedId() - 1 == audioProcessor.mArrLanguage.indexOf("english"))
+    {
+        LocalisedStrings *currentMappings = new             LocalisedStrings(String::createStringFromData(BinaryData::english_txt, BinaryData::english_txtSize), false);
+        juce::LocalisedStrings::setCurrentMappings(currentMappings);
+    }
+    else if (mLanguageMenu.getSelectedId() - 1 == audioProcessor.mArrLanguage.indexOf(TRANS("French")))
+    {
+        LocalisedStrings *currentMappings = new             LocalisedStrings(String::createStringFromData(BinaryData::french_txt, BinaryData::french_txtSize), false);
+        juce::LocalisedStrings::setCurrentMappings(currentMappings);
+    }
+    else if(mLanguageMenu.getSelectedId() - 1 == audioProcessor.mArrLanguage.indexOf(TRANS("SimplifiedChinese")))
+    {
+        LocalisedStrings *currentMappings = new             LocalisedStrings(String::createStringFromData(BinaryData::chinese_simplified_txt, BinaryData::chinese_simplified_txtSize), false);
+        juce::LocalisedStrings::setCurrentMappings(currentMappings);
+    }
+    else if (mLanguageMenu.getSelectedId() - 1 == audioProcessor.mArrLanguage.indexOf(TRANS("TraditionalChinese")))
+    {
+        LocalisedStrings *currentMappings = new             LocalisedStrings(String::createStringFromData(BinaryData::chinese_traditional_txt, BinaryData::chinese_traditional_txtSize), false);
+        juce::LocalisedStrings::setCurrentMappings(currentMappings);
+    }
+    
+    
+    this->repaint();
+    
+    
 }
