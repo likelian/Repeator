@@ -28,7 +28,6 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
     otherLookAndFeel.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
     mGainSlider.setLookAndFeel(&otherLookAndFeel);
     mGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 70, 20);
-    //mGainSlider.setTextValueSuffix(TRANS(" dB"));
     mGainSlider.setNumDecimalPlacesToDisplay(1);
     mGainSlider.setRange(-30.0, 12.0);
 
@@ -41,14 +40,11 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
     otherLookAndFeel.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
     mPeriodSlider.setLookAndFeel(&otherLookAndFeel);
     mPeriodSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 70, 20);
-    
-    //mPeriodSlider.setTextValueSuffix(TRANS(" s"));
     mPeriodSlider.setNumDecimalPlacesToDisplay(0);
     mPeriodSlider.setRange(1, 60, 1);
     
     addAndMakeVisible (mPeriodSLabel);
     mPeriodSLabel.setFont (juce::Font (18.0f));
-    //mPeriodSLabel.setFont (juce::Font (18.0f, juce::Font::bold));
     mPeriodSLabel.setJustificationType (juce::Justification::centred);
 
 
@@ -64,7 +60,6 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
     mLanguageMenu.setSelectedId(audioProcessor.mLanguage + 1);
     mLanguageMenu.onChange = [this] { LanguageChanged(); };
 }
-
 
 
 RepeatorAudioProcessorEditor::~RepeatorAudioProcessorEditor()
@@ -206,7 +201,7 @@ void RepeatorAudioProcessorEditor::LanguageChanged()
     
     audioProcessor.mLanguage = mLanguageMenu.getSelectedId() - 1;
     
-    if(mLanguageMenu.getSelectedId() - 1 == audioProcessor.mArrLanguage.indexOf("english"))
+    if(mLanguageMenu.getSelectedId() - 1 == audioProcessor.mArrLanguage.indexOf("English"))
     {
         LocalisedStrings *currentMappings = new             LocalisedStrings(String::createStringFromData(BinaryData::english_txt, BinaryData::english_txtSize), false);
         juce::LocalisedStrings::setCurrentMappings(currentMappings);
@@ -227,8 +222,6 @@ void RepeatorAudioProcessorEditor::LanguageChanged()
         juce::LocalisedStrings::setCurrentMappings(currentMappings);
     }
     
-    
+    //refresh GUI, call paint()
     this->repaint();
-    
-    
 }
