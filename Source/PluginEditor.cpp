@@ -84,24 +84,6 @@ void RepeatorAudioProcessorEditor::paint (juce::Graphics& g)
     g.setFont (20);
     g.setColour (juce::Colours::white);
     g.drawText ("Repeator", 150, 0, 100, 50, juce::Justification::centred);
-    
-    
-    
-    
-    
-    
-//    std::unique_ptr<Drawable> languageIcon = Drawable::createFromImageData (BinaryData::languageicon_svg, BinaryData::languageicon_svgSize);
-//    languageIcon->drawAt(g, 2, 2, 1.f);
-//    
-//    Rectangle<float> boxBoundsFloat (0.f, 0.f, 20.f, 20.f);
-//    //languageIcon->drawAt(g, 2, 2, 1.f);
-//    languageIcon->drawWithin(g, boxBoundsFloat, juce::RectanglePlacement::centred, 1.f);
-//    
-    
-    
-    
-    
-    
 }
 
 

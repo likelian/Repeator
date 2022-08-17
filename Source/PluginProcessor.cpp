@@ -11,6 +11,9 @@
 
 
 
+
+Identifier RepeatorAudioProcessor::mArrSelectID("selections");
+
 //==============================================================================
 RepeatorAudioProcessor::RepeatorAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -31,7 +34,7 @@ RepeatorAudioProcessor::RepeatorAudioProcessor()
                            createParameters())
 #endif
 {
-    mFormatManager.registerBasicFormats();
+    mFormatManager.registerBasicFormats(); //file loading formats
     
     mPresetManager = std::make_unique<PresetManager>(this);
     
@@ -39,13 +42,13 @@ RepeatorAudioProcessor::RepeatorAudioProcessor()
     LocalisedStrings *currentMappings = new             LocalisedStrings(String::createStringFromData(BinaryData::english_txt, BinaryData::english_txtSize), false);
     juce::LocalisedStrings::setCurrentMappings(currentMappings);
     
-    
     mArrLanguage.add("English");
     mArrLanguage.add(TRANS("French"));
     mArrLanguage.add(TRANS("SimplifiedChinese"));
     mArrLanguage.add(TRANS("TraditionalChinese"));
     
     
+    //Initial selection menu
     mArrSelect.add("bypass");
     mArrSelect.add("silence");
     mArrSelect.add("noise");
@@ -54,6 +57,10 @@ RepeatorAudioProcessor::RepeatorAudioProcessor()
     
     //Deep copy the English text into Original as the reference of translation.
     mArrSelectOriginal = mArrSelect;
+    
+    //other satate info
+    mAPVTS.state.setProperty(mArrSelectID, var(mArrSelect), nullptr);
+    otherStateInfo.referTo(mAPVTS.state.getPropertyAsValue(mArrSelectID, nullptr));
 }
 
 
@@ -232,7 +239,6 @@ void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
         mGain = pow(10., mGain/20.);
     
     
-
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
     // guaranteed to be empty - they may contain garbage).
@@ -249,6 +255,8 @@ void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
     
+    
+    //select "silence"
     if(mSelection==mArrSelect.indexOf(TRANS("silence")) && mIsPlay)
     {
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
@@ -261,6 +269,7 @@ void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             }
         }
     }
+    //select "noise"
     else if(mSelection==mArrSelect.indexOf(TRANS("noise")) && mIsPlay)
     {
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
@@ -306,6 +315,11 @@ juce::AudioProcessorEditor* RepeatorAudioProcessor::createEditor()
     return new RepeatorAudioProcessorEditor (*this);
 }
 
+
+
+
+
+
 //==============================================================================
 void RepeatorAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
@@ -342,6 +356,12 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new RepeatorAudioProcessor();
 }
+
+
+
+
+
+
 
 
 

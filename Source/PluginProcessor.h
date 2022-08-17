@@ -65,6 +65,8 @@ public:
     
     
     //==============================================================================
+    
+    //some of these can be private
     float mPeriod = 15.f;
     float mIniPos = 0.f;
     float mLastPos = 0.f;
@@ -79,11 +81,7 @@ public:
     float mBlockInSec = 0.f;
     float mTimeInSec = 0.f;
     
-    String mFileName;
-    
-    //==============================================================================
-    void loadFile();
-    
+    //==============================================================================    
     void loadFile(AudioFormatReader* reader);
     
     std::unique_ptr<FileChooser> mChooser;
@@ -93,12 +91,19 @@ public:
     StringArray mArrSelectOriginal;
     StringArray mArrPath;
     
+    String mFileName;
+    
     //==============================================================================
     StringArray mArrLanguage;
     int mLanguage = 0;
     
     //==============================================================================
     PresetManager* getPresetManager();
+    
+    //==============================================================================
+    
+    Value otherStateInfo; //value to hold non-parameter state info, including stringAarry
+    static Identifier mArrSelectID; //ID for the selection menu stringArray
     
     
 
@@ -114,9 +119,10 @@ private:
     
     //==============================================================================
     AudioProcessorValueTreeState::ParameterLayout createParameters();
-    
     std::unique_ptr<PresetManager> mPresetManager;
     
-    bool mIsMoving;
+    //==============================================================================
+    bool mIsMoving; //is audio running
+
     
 };
