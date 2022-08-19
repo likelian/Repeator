@@ -56,9 +56,9 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
     mMenu.addItemList(audioProcessor.mArrSelect, 1);
     mMenu.setSelectedId(audioProcessor.mSelection + 1);
     mMenu.onChange = [this] { MenuChanged(); };
+
     
     //==============================================================================
-    
     mLanguageMenu.setLookAndFeel(&mComboNoArrowLookAndFeel);
     addAndMakeVisible(mLanguageMenu);
     mLanguageMenu.addItemList(audioProcessor.mArrLanguage, 1);
@@ -84,24 +84,6 @@ void RepeatorAudioProcessorEditor::paint (juce::Graphics& g)
     g.setFont (20);
     g.setColour (juce::Colours::white);
     g.drawText ("Repeator", 150, 0, 100, 50, juce::Justification::centred);
-    
-    
-    
-    
-    
-    
-//    std::unique_ptr<Drawable> languageIcon = Drawable::createFromImageData (BinaryData::languageicon_svg, BinaryData::languageicon_svgSize);
-//    languageIcon->drawAt(g, 2, 2, 1.f);
-//    
-//    Rectangle<float> boxBoundsFloat (0.f, 0.f, 20.f, 20.f);
-//    //languageIcon->drawAt(g, 2, 2, 1.f);
-//    languageIcon->drawWithin(g, boxBoundsFloat, juce::RectanglePlacement::centred, 1.f);
-//    
-    
-    
-    
-    
-    
 }
 
 
@@ -117,7 +99,6 @@ void RepeatorAudioProcessorEditor::resized()
 //==============================================================================
 void RepeatorAudioProcessorEditor::MenuChanged()
 {
-    
     audioProcessor.mDuration = 1.f; //reset mDuration
     
     //getSelectedId starts at 1, and selection list starts at 0
@@ -140,37 +121,14 @@ void RepeatorAudioProcessorEditor::MenuChanged()
         });
     }
     //choose an exisiting file in the menu
-    else if(
-            //selection is a file
-            mMenu.getSelectedId() - 1 > audioProcessor.mArrSelectOriginal.indexOf("beep")
-            )
+    else if(mMenu.getSelectedId() - 1 > audioProcessor.mArrSelectOriginal.indexOf("beep")) //selection is a file
     {
-        int idx = mMenu.getSelectedId() - 2 - audioProcessor.mArrSelectOriginal.indexOf("beep");
-        if(idx < audioProcessor.mArrPath.size())
-        {
-            const File file(audioProcessor.mArrPath.getReference(idx));
-            
-            AudioFormatReader* reader = audioProcessor.mFormatManager.createReaderFor(file);
-            
-            if(reader!=nullptr)
-            {
-                audioProcessor.mFileName = file.getFileName();
-                audioProcessor.loadFile(reader);
-            }
-        }
+        audioProcessor.LoadExistingFile();
     }
     //select "beep"
     else if(mMenu.getSelectedId() - 1 == audioProcessor.mArrSelectOriginal.indexOf("beep"))
     {
-        InputStream* inputStream = new MemoryInputStream (BinaryData::beep_ogg, BinaryData::beep_oggSize, false);
-        OggVorbisAudioFormat oggAudioFormat;
-        AudioFormatReader* reader = oggAudioFormat.createReaderFor(inputStream, false);
- 
-        if (reader != nullptr)
-        {
-            audioProcessor.loadFile(reader);
-        }
-        
+        audioProcessor.LoadBeep();
     }
 }
 
@@ -181,6 +139,8 @@ void RepeatorAudioProcessorEditor::filesDropped(const StringArray& files, int, i
     
     EditorLoadFile(file);
 }
+
+
 
     
 void RepeatorAudioProcessorEditor::EditorLoadFile(File file)
@@ -236,6 +196,7 @@ void RepeatorAudioProcessorEditor::LanguageChanged()
         LocalisedStrings *currentMappings = new             LocalisedStrings(String::createStringFromData(BinaryData::chinese_traditional_txt, BinaryData::chinese_traditional_txtSize), false);
         juce::LocalisedStrings::setCurrentMappings(currentMappings);
     }
+
     
     //update the language in mArrSelect of the first 4 selections
     for (int i = 0; i < audioProcessor.mArrSelectOriginal.size()-1; i++)
@@ -252,9 +213,9 @@ void RepeatorAudioProcessorEditor::LanguageChanged()
     
     mPeriodSLabel.setText (TRANS("Period"), juce::dontSendNotification);
     
+    
     mMenu.clear();
     mMenu.addItemList(audioProcessor.mArrSelect, 1);
     mMenu.setSelectedId(audioProcessor.mSelection + 1);
     mMenu.onChange = [this] { MenuChanged(); };
-
 }

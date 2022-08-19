@@ -10,8 +10,6 @@
 
 #include <JuceHeader.h>
 
-#include "PresetManager.h"
-
 
 
 //==============================================================================
@@ -65,6 +63,8 @@ public:
     
     
     //==============================================================================
+    
+    //some of these can be private
     float mPeriod = 15.f;
     float mIniPos = 0.f;
     float mLastPos = 0.f;
@@ -72,33 +72,35 @@ public:
     float mDuration = 1.f;
     bool mIsPlay = false;
     float mGain {1.0};
-    int mSelection = 0;
     
     //parameters for sample playback
     int mPlayHead = 0;
     float mBlockInSec = 0.f;
     float mTimeInSec = 0.f;
     
-    String mFileName;
-    
-    //==============================================================================
-    void loadFile();
-    
+    //==============================================================================    
     void loadFile(AudioFormatReader* reader);
+    void LoadExistingFile();
+    void LoadBeep();
     
     std::unique_ptr<FileChooser> mChooser;
     AudioFormatManager mFormatManager;
-
-    StringArray mArrSelect;
+    
     StringArray mArrSelectOriginal;
+    StringArray mArrSelect;
     StringArray mArrPath;
+    
+    int mSelection = 0;
+    
+    String mFileName;
     
     //==============================================================================
     StringArray mArrLanguage;
     int mLanguage = 0;
     
     //==============================================================================
-    PresetManager* getPresetManager();
+    
+    
     
     
 
@@ -115,8 +117,9 @@ private:
     //==============================================================================
     AudioProcessorValueTreeState::ParameterLayout createParameters();
     
-    std::unique_ptr<PresetManager> mPresetManager;
     
-    bool mIsMoving;
+    //==============================================================================
+    bool mIsMoving; //is audio running
+
     
 };

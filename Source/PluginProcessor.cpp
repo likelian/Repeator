@@ -10,7 +10,6 @@
 #include "PluginEditor.h"
 
 
-
 //==============================================================================
 RepeatorAudioProcessor::RepeatorAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -31,14 +30,11 @@ RepeatorAudioProcessor::RepeatorAudioProcessor()
                            createParameters())
 #endif
 {
-    mFormatManager.registerBasicFormats();
-    
-    mPresetManager = std::make_unique<PresetManager>(this);
+    mFormatManager.registerBasicFormats(); //file loading formats
     
     //Set the language of language menu. The rest text will be updated again.
     LocalisedStrings *currentMappings = new             LocalisedStrings(String::createStringFromData(BinaryData::english_txt, BinaryData::english_txtSize), false);
     juce::LocalisedStrings::setCurrentMappings(currentMappings);
-    
     
     mArrLanguage.add("English");
     mArrLanguage.add(TRANS("French"));
@@ -46,6 +42,7 @@ RepeatorAudioProcessor::RepeatorAudioProcessor()
     mArrLanguage.add(TRANS("TraditionalChinese"));
     
     
+    //Initial selection menu
     mArrSelect.add("bypass");
     mArrSelect.add("silence");
     mArrSelect.add("noise");
@@ -232,7 +229,6 @@ void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
         mGain = pow(10., mGain/20.);
     
     
-
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
     // guaranteed to be empty - they may contain garbage).
@@ -249,6 +245,8 @@ void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
     
+    
+    //select "silence"
     if(mSelection==mArrSelect.indexOf(TRANS("silence")) && mIsPlay)
     {
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
@@ -261,6 +259,7 @@ void RepeatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             }
         }
     }
+    //select "noise"
     else if(mSelection==mArrSelect.indexOf(TRANS("noise")) && mIsPlay)
     {
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
@@ -306,34 +305,102 @@ juce::AudioProcessorEditor* RepeatorAudioProcessor::createEditor()
     return new RepeatorAudioProcessorEditor (*this);
 }
 
+
+
+
+
+
 //==============================================================================
 void RepeatorAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
-    XmlElement preset(("Repeator_StateInfo"));
-    XmlElement* presetBody = new XmlElement("Repeator_Preset");
-        
-    mPresetManager->getXmlForPreset(presetBody);
-        
-    preset.addChildElement(presetBody);
-    copyXmlToBinary (preset, destData);
+    
+    
+    static Identifier otherStateID("otherStateID");
+    ValueTree otherStateVT(otherStateID); //initial ValueTree
+    
+    
+    static Identifier selectionID("selectionInt"); //initial Identifier
+    otherStateVT.setProperty(selectionID, var(mSelection), nullptr);
+    
+    static Identifier languageID("languageInt"); //initial Identifier
+    otherStateVT.setProperty(languageID, var(mLanguage), nullptr);
+    
+    static Identifier arrSelectID("selectionStringArray"); //initial Identifier
+    otherStateVT.setProperty(arrSelectID, var(mArrSelect), nullptr);
+    
+    static Identifier arrPathID("pathStringArray"); //initial Identifier
+    otherStateVT.setProperty(arrPathID, var(mArrPath), nullptr);
+
+    
+    mAPVTS.state.addChild(otherStateVT, 0, nullptr); //add child node to valuetree
+    
+    
+    
+    MemoryOutputStream stream(destData, false);
+    mAPVTS.state.writeToStream (stream);
+    
+    
 }
 
 void RepeatorAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
-    const auto xmlState = getXmlFromBinary(data, sizeInBytes);
-        
-    jassert (xmlState.get() != nullptr);
-        
-    for(auto* subchild : xmlState->getChildIterator())
-    {
-        mPresetManager->loadPresetForXml(subchild);
-    }
+    auto tree = ValueTree::readFromData(data, size_t(sizeInBytes));
+        if (tree.isValid() == false)
+            return; //end the function
 
+    mAPVTS.replaceState (tree);
+    
+    
+    static Identifier otherStateID("otherStateID");
+    ValueTree otherStateVT = mAPVTS.state.getChildWithName(otherStateID);
+    
+    
+    ///*
+    static Identifier arrSelectID("selectionStringArray");
+    var varArrSelect = otherStateVT[arrSelectID];
+    //try static cast when everything is fixed
+    if (!varArrSelect.isVoid())
+    {
+        mArrSelect.clear();
+        for (int i=0; i<varArrSelect.size(); i++)
+        {
+            mArrSelect.add(varArrSelect[i]);
+        }
+    }
+    
+    static Identifier arrPathID("pathStringArray");
+    var varArrPath = otherStateVT[arrPathID];
+    //try static cast when everything is fixed
+    if (!varArrPath.isVoid())
+    {
+        mArrPath.clear();
+        for (int i=0; i<varArrPath.size(); i++)
+        {
+            mArrPath.add(varArrPath[i]);
+        }
+    }
+    
+    
+    
+    static Identifier languageID("languageInt");
+    mLanguage = otherStateVT[languageID];
+    
+    static Identifier selectionID("selectionInt");
+    mSelection = otherStateVT[selectionID];
+    
+    
+    if(mSelection > mArrSelectOriginal.indexOf("beep"))
+        LoadExistingFile();
+    else if (mSelection == mArrSelectOriginal.indexOf("beep"))
+        LoadBeep();
+    
+    
+    
 }
 
 //==============================================================================
@@ -342,6 +409,12 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new RepeatorAudioProcessor();
 }
+
+
+
+
+
+
 
 
 
@@ -381,9 +454,38 @@ void RepeatorAudioProcessor::loadFile(AudioFormatReader* reader)
     
     delete reader;
     mPlayHead = 0;
-    
 }
 
+
+void RepeatorAudioProcessor::LoadExistingFile()
+{
+    int idx = mSelection - 1 - mArrSelectOriginal.indexOf("beep");
+    if(idx < mArrPath.size())
+    {
+        const File file(mArrPath.getReference(idx));
+        
+        AudioFormatReader* reader = mFormatManager.createReaderFor(file);
+        
+        if(reader!=nullptr)
+        {
+            mFileName = file.getFileName();
+            loadFile(reader);
+        }
+    }
+}
+
+
+void RepeatorAudioProcessor::LoadBeep()
+{
+    InputStream* inputStream = new MemoryInputStream (BinaryData::beep_ogg, BinaryData::beep_oggSize, false);
+    OggVorbisAudioFormat oggAudioFormat;
+    AudioFormatReader* reader = oggAudioFormat.createReaderFor(inputStream, false);
+
+    if (reader != nullptr)
+    {
+        loadFile(reader);
+    }
+}
 
 //==============================================================================
 void RepeatorAudioProcessor::reSample(AudioFormatReader* reader)
@@ -409,6 +511,9 @@ void RepeatorAudioProcessor::reSample(AudioFormatReader* reader)
 
     resamplingSource.releaseResources();
 }
+
+
+
 
 
 
