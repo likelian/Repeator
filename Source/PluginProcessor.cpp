@@ -454,37 +454,7 @@ void RepeatorAudioProcessor::loadFile(AudioFormatReader* reader)
     
     delete reader;
     mPlayHead = 0;
-    
 }
-
-
-//==============================================================================
-void RepeatorAudioProcessor::reSample(AudioFormatReader* reader)
-{
-    double reSampleRatio = reader->sampleRate / getSampleRate();
-    
-    //4096: leave some empty samples for the last processing block access
-    int newLengthInSamples = juce::roundToInt(reader->lengthInSamples / reSampleRatio + 4096);
-    
-    mIsResampled = true;
-    
-    AudioFormatReaderSource readerSource(reader, false);
-    ResamplingAudioSource resamplingSource(&readerSource, false, getTotalNumInputChannels());
-
-    resamplingSource.setResamplingRatio (reSampleRatio);
-    resamplingSource.prepareToPlay (newLengthInSamples, getSampleRate());
-    
-    mAudioBuffer.clear();
-    mAudioBuffer.setSize(getTotalNumInputChannels(), newLengthInSamples);
-    AudioSourceChannelInfo info(&mAudioBuffer, 0, newLengthInSamples);
-
-    resamplingSource.getNextAudioBlock(info);
-
-    resamplingSource.releaseResources();
-}
-
-
-
 
 
 void RepeatorAudioProcessor::LoadExistingFile()
@@ -516,3 +486,34 @@ void RepeatorAudioProcessor::LoadBeep()
         loadFile(reader);
     }
 }
+
+//==============================================================================
+void RepeatorAudioProcessor::reSample(AudioFormatReader* reader)
+{
+    double reSampleRatio = reader->sampleRate / getSampleRate();
+    
+    //4096: leave some empty samples for the last processing block access
+    int newLengthInSamples = juce::roundToInt(reader->lengthInSamples / reSampleRatio + 4096);
+    
+    mIsResampled = true;
+    
+    AudioFormatReaderSource readerSource(reader, false);
+    ResamplingAudioSource resamplingSource(&readerSource, false, getTotalNumInputChannels());
+
+    resamplingSource.setResamplingRatio (reSampleRatio);
+    resamplingSource.prepareToPlay (newLengthInSamples, getSampleRate());
+    
+    mAudioBuffer.clear();
+    mAudioBuffer.setSize(getTotalNumInputChannels(), newLengthInSamples);
+    AudioSourceChannelInfo info(&mAudioBuffer, 0, newLengthInSamples);
+
+    resamplingSource.getNextAudioBlock(info);
+
+    resamplingSource.releaseResources();
+}
+
+
+
+
+
+

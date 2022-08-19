@@ -56,12 +56,7 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
     mMenu.addItemList(audioProcessor.mArrSelect, 1);
     mMenu.setSelectedId(audioProcessor.mSelection + 1);
     mMenu.onChange = [this] { MenuChanged(); };
-    //previous selection is a file
-//    if(mMenu.getSelectedId() - 1 > audioProcessor.mArrSelectOriginal.indexOf("beep"))
-//        LoadExistingFile();
-//    //previous selection is "beep"
-//    else if (mMenu.getSelectedId() - 1 == audioProcessor.mArrSelectOriginal.indexOf("beep"))
-//        LoadBeep();
+
     
     //==============================================================================
     mLanguageMenu.setLookAndFeel(&mComboNoArrowLookAndFeel);
@@ -134,15 +129,6 @@ void RepeatorAudioProcessorEditor::MenuChanged()
     else if(mMenu.getSelectedId() - 1 == audioProcessor.mArrSelectOriginal.indexOf("beep"))
     {
         audioProcessor.LoadBeep();
-//        InputStream* inputStream = new MemoryInputStream (BinaryData::beep_ogg, BinaryData::beep_oggSize, false);
-//        OggVorbisAudioFormat oggAudioFormat;
-//        AudioFormatReader* reader = oggAudioFormat.createReaderFor(inputStream, false);
-//
-//        if (reader != nullptr)
-//        {
-//            audioProcessor.loadFile(reader);
-//        }
-        
     }
 }
 
@@ -153,37 +139,6 @@ void RepeatorAudioProcessorEditor::filesDropped(const StringArray& files, int, i
     
     EditorLoadFile(file);
 }
-
-
-
-//void RepeatorAudioProcessorEditor::LoadExistingFile()
-//{
-//    int idx = mMenu.getSelectedId() - 2 - audioProcessor.mArrSelectOriginal.indexOf("beep");
-//    if(idx < audioProcessor.mArrPath.size())
-//    {
-//        const File file(audioProcessor.mArrPath.getReference(idx));
-//
-//        AudioFormatReader* reader = audioProcessor.mFormatManager.createReaderFor(file);
-//
-//        if(reader!=nullptr)
-//        {
-//            audioProcessor.mFileName = file.getFileName();
-//            audioProcessor.loadFile(reader);
-//        }
-//    }
-//}
-
-//void RepeatorAudioProcessorEditor::LoadBeep()
-//{
-//    InputStream* inputStream = new MemoryInputStream (BinaryData::beep_ogg, BinaryData::beep_oggSize, false);
-//    OggVorbisAudioFormat oggAudioFormat;
-//    AudioFormatReader* reader = oggAudioFormat.createReaderFor(inputStream, false);
-//
-//    if (reader != nullptr)
-//    {
-//        audioProcessor.loadFile(reader);
-//    }
-//}
 
 
 

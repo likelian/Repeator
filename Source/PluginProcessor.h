@@ -80,6 +80,8 @@ public:
     
     //==============================================================================    
     void loadFile(AudioFormatReader* reader);
+    void LoadExistingFile();
+    void LoadBeep();
     
     std::unique_ptr<FileChooser> mChooser;
     AudioFormatManager mFormatManager;
@@ -98,8 +100,7 @@ public:
     
     //==============================================================================
     
-    void LoadExistingFile();
-    void LoadBeep();
+    
     
     
 
