@@ -74,7 +74,6 @@ public:
     float mDuration = 1.f;
     bool mIsPlay = false;
     float mGain {1.0};
-    int mSelection = 0;
     
     //parameters for sample playback
     int mPlayHead = 0;
@@ -91,6 +90,8 @@ public:
     StringArray mArrSelectOriginal;
     StringArray mArrPath;
     
+    int mSelection = 0;
+    
     String mFileName;
     
     //==============================================================================
@@ -104,7 +105,7 @@ public:
     
     Value otherStateInfo; //value to hold non-parameter state info, including stringAarry
     static Identifier mArrSelectID; //ID for the selection menu stringArray
-    
+    static Identifier mSelectionID; //ID for the menu selection int
     
 
 private:
@@ -120,6 +121,7 @@ private:
     //==============================================================================
     AudioProcessorValueTreeState::ParameterLayout createParameters();
     std::unique_ptr<PresetManager> mPresetManager;
+    
     
     //==============================================================================
     bool mIsMoving; //is audio running

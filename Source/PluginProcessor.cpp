@@ -12,7 +12,8 @@
 
 
 
-Identifier RepeatorAudioProcessor::mArrSelectID("selections");
+Identifier RepeatorAudioProcessor::mArrSelectID("selectionArray");
+Identifier RepeatorAudioProcessor::mSelectionID("selectionInt");
 
 //==============================================================================
 RepeatorAudioProcessor::RepeatorAudioProcessor()
@@ -59,8 +60,26 @@ RepeatorAudioProcessor::RepeatorAudioProcessor()
     mArrSelectOriginal = mArrSelect;
     
     //other satate info
-    mAPVTS.state.setProperty(mArrSelectID, var(mArrSelect), nullptr);
-    otherStateInfo.referTo(mAPVTS.state.getPropertyAsValue(mArrSelectID, nullptr));
+    
+    static Identifier myDataNodeType("otherStateInfo");
+    ValueTree child(myDataNodeType);
+    //child.setProperty(mArrSelectID, var(mArrSelect), nullptr); //add a pair
+    child.setProperty(mSelectionID, var(mSelection), nullptr);  //add another
+    mAPVTS.state.addChild(child, 0, nullptr);               //add node to valuetree
+    
+    //otherStateInfo.referTo(child.getPropertyAsValue(mArrSelectID, nullptr));
+    otherStateInfo.referTo(child.getPropertyAsValue(mArrSelectID, nullptr));
+    
+    //mAPVTS.state.setProperty(mArrSelectID, var(mArrSelect), nullptr);
+    //otherStateInfo.referTo(mAPVTS.state.getPropertyAsValue(mArrSelectID, nullptr));
+    
+    //mAPVTS.state.setProperty(mSelectionID, var(mSelection), nullptr);
+    //otherStateInfo.referTo(mAPVTS.state.getPropertyAsValue(mSelectionID, nullptr));
+    
+    //mSelection = mAPVTS.getRawParameterValue("selectionInt");
+    //mSelection = child.getPropertyAsValue("selectionInt", nullptr);
+    mSelection = static_cast<int> (child.getProperty ("selectionInt"));
+    
 }
 
 
@@ -326,6 +345,7 @@ void RepeatorAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
+    
     XmlElement preset(("Repeator_StateInfo"));
     XmlElement* presetBody = new XmlElement("Repeator_Preset");
         
@@ -333,6 +353,7 @@ void RepeatorAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
         
     preset.addChildElement(presetBody);
     copyXmlToBinary (preset, destData);
+    
 }
 
 void RepeatorAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
@@ -347,7 +368,14 @@ void RepeatorAudioProcessor::setStateInformation (const void* data, int sizeInBy
     {
         mPresetManager->loadPresetForXml(subchild);
     }
-
+    
+    
+    otherStateInfo.referTo(mAPVTS.state.getChild(0).getPropertyAsValue(mArrSelectID, nullptr));
+    
+    
+    
+    
+    
 }
 
 //==============================================================================
