@@ -387,13 +387,17 @@ void RepeatorAudioProcessor::setStateInformation (const void* data, int sizeInBy
     
     
     
-    
+    static Identifier languageID("languageInt");
+    mLanguage = otherStateVT[languageID];
     
     static Identifier selectionID("selectionInt");
     mSelection = otherStateVT[selectionID];
     
-    static Identifier languageID("languageInt");
-    mLanguage = otherStateVT[languageID];
+    
+    if(mSelection > mArrSelectOriginal.indexOf("beep"))
+        LoadExistingFile();
+    else if (mSelection == mArrSelectOriginal.indexOf("beep"))
+        LoadBeep();
     
     
     
@@ -481,3 +485,34 @@ void RepeatorAudioProcessor::reSample(AudioFormatReader* reader)
 
 
 
+
+
+void RepeatorAudioProcessor::LoadExistingFile()
+{
+    int idx = mSelection - 1 - mArrSelectOriginal.indexOf("beep");
+    if(idx < mArrPath.size())
+    {
+        const File file(mArrPath.getReference(idx));
+        
+        AudioFormatReader* reader = mFormatManager.createReaderFor(file);
+        
+        if(reader!=nullptr)
+        {
+            mFileName = file.getFileName();
+            loadFile(reader);
+        }
+    }
+}
+
+
+void RepeatorAudioProcessor::LoadBeep()
+{
+    InputStream* inputStream = new MemoryInputStream (BinaryData::beep_ogg, BinaryData::beep_oggSize, false);
+    OggVorbisAudioFormat oggAudioFormat;
+    AudioFormatReader* reader = oggAudioFormat.createReaderFor(inputStream, false);
+
+    if (reader != nullptr)
+    {
+        loadFile(reader);
+    }
+}

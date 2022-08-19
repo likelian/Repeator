@@ -55,9 +55,9 @@ private:
     
     void EditorLoadFile(File file);
     
-    void LoadExistingFile();
+    //void LoadExistingFile();
     
-    void LoadBeep();
+    //void LoadBeep();
     
     
     /*
