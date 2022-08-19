@@ -83,9 +83,9 @@ public:
     
     std::unique_ptr<FileChooser> mChooser;
     AudioFormatManager mFormatManager;
-
-    StringArray mArrSelect;
+    
     StringArray mArrSelectOriginal;
+    StringArray mArrSelect;
     StringArray mArrPath;
     
     int mSelection = 0;
@@ -97,10 +97,6 @@ public:
     int mLanguage = 0;
     
     //==============================================================================
-    
-    Value otherStateInfo; //value to hold non-parameter state info, including stringAarry
-    static Identifier mArrSelectID; //ID for the selection menu stringArray
-    static Identifier mSelectionID; //ID for the menu selection int
     
 
 private:

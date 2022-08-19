@@ -319,21 +319,47 @@ void RepeatorAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     
     
     
+    /*
+    static Identifier arrSelectID("SelectionStringArray");
+    ValueTree childArrSelect(arrSelectID);
+    childArrSelect.setProperty(arrSelectID, var(mArrSelect), nullptr);
+    mAPVTS.state.addChild(childArrSelect, 0, nullptr);
+    */
     
     
-    static Identifier selectionIntID("selectionInt");
-    ValueTree child(selectionIntID);
-    child.setProperty(selectionIntID, var(mSelection), nullptr);
-    mAPVTS.state.addChild(child, 0, nullptr); //add node to valuetree
+//    static Identifier selectionID("selectionInt"); //initial Identifier
+//    ValueTree childSelection(selectionID); //initial ValueTree
+//    childSelection.setProperty(selectionID, var(mSelection), nullptr);
+//    mAPVTS.state.addChild(childSelection, 1, nullptr); //add child node to valuetree
+//
+//
+//    static Identifier languageID("languageInt"); //initial Identifier
+//    ValueTree childLanguage(languageID); //initial ValueTree
+//    childLanguage.setProperty(languageID, var(mLanguage), nullptr);
+//    mAPVTS.state.addChild(childLanguage, 2, nullptr); //add child node to valuetree
+    
+    
+    static Identifier otherStateID("otherStateID");
+    ValueTree otherStateVT(otherStateID); //initial ValueTree
+    
+    static Identifier selectionID("selectionInt"); //initial Identifier
+    otherStateVT.setProperty(selectionID, var(mSelection), nullptr);
+    
+    static Identifier languageID("languageInt"); //initial Identifier
+    otherStateVT.setProperty(languageID, var(mLanguage), nullptr);
+    
+    mAPVTS.state.addChild(otherStateVT, 0, nullptr); //add child node to valuetree
     
     
     
+    MemoryOutputStream stream(destData, false);
+    mAPVTS.state.writeToStream (stream);
     
-    
+    /*
     auto state = mAPVTS.copyState();
     std::unique_ptr<juce::XmlElement> xml (state.createXml());
     copyXmlToBinary (*xml, destData);
-
+     */
     
 }
 
@@ -343,19 +369,44 @@ void RepeatorAudioProcessor::setStateInformation (const void* data, int sizeInBy
     // whose contents will have been created by the getStateInformation() call.
 
     
+    /*
     std::unique_ptr<juce::XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
      
     if (xmlState.get() != nullptr)
         if (xmlState->hasTagName (mAPVTS.state.getType()))
             mAPVTS.replaceState (juce::ValueTree::fromXml (*xmlState));
+    */
+    
+    
+    auto tree = ValueTree::readFromData(data, size_t(sizeInBytes));
+        if (tree.isValid() == false)
+            return; //end the function
+
+    mAPVTS.replaceState (tree);
     
     
     
+    /*
+    static Identifier arrSelectID("SelectionStringArray");
+    mArrSelect = static_cast<StringArray> (mAPVTS.state.getChildWithName(arrSelectID)[arrSelectID]);
+    */
     
     
-    static Identifier selectionIntID("selectionInt");
+//    static Identifier selectionID("selectionInt");
+//    mSelection = mAPVTS.state.getChildWithName(selectionID)[selectionID];
+//
+//    static Identifier languageID("languageInt");
+//    mLanguage = mAPVTS.state.getChildWithName(languageID)[languageID];
     
-    mSelection = mAPVTS.state.getChildWithName(selectionIntID)[selectionIntID];
+    
+    static Identifier otherStateID("otherStateID");
+    ValueTree otherStateVT = mAPVTS.state.getChildWithName(otherStateID);
+    
+    static Identifier selectionID("selectionInt");
+    mSelection = otherStateVT[selectionID];
+    
+    static Identifier languageID("languageInt");
+    mLanguage = otherStateVT[languageID];
     
     
     
