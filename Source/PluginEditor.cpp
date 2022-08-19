@@ -58,7 +58,6 @@ RepeatorAudioProcessorEditor::RepeatorAudioProcessorEditor (RepeatorAudioProcess
     mMenu.onChange = [this] { MenuChanged(); };
     
     //==============================================================================
-    
     mLanguageMenu.setLookAndFeel(&mComboNoArrowLookAndFeel);
     addAndMakeVisible(mLanguageMenu);
     mLanguageMenu.addItemList(audioProcessor.mArrLanguage, 1);
