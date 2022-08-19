@@ -10,8 +10,6 @@
 
 #include <JuceHeader.h>
 
-#include "PresetManager.h"
-
 
 
 //==============================================================================
@@ -99,9 +97,6 @@ public:
     int mLanguage = 0;
     
     //==============================================================================
-    PresetManager* getPresetManager();
-    
-    //==============================================================================
     
     Value otherStateInfo; //value to hold non-parameter state info, including stringAarry
     static Identifier mArrSelectID; //ID for the selection menu stringArray
@@ -120,7 +115,6 @@ private:
     
     //==============================================================================
     AudioProcessorValueTreeState::ParameterLayout createParameters();
-    std::unique_ptr<PresetManager> mPresetManager;
     
     
     //==============================================================================

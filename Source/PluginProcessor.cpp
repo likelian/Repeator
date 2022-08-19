@@ -10,11 +10,6 @@
 #include "PluginEditor.h"
 
 
-
-
-Identifier RepeatorAudioProcessor::mArrSelectID("selectionArray");
-Identifier RepeatorAudioProcessor::mSelectionID("selectionInt");
-
 //==============================================================================
 RepeatorAudioProcessor::RepeatorAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -37,8 +32,6 @@ RepeatorAudioProcessor::RepeatorAudioProcessor()
 {
     mFormatManager.registerBasicFormats(); //file loading formats
     
-    mPresetManager = std::make_unique<PresetManager>(this);
-    
     //Set the language of language menu. The rest text will be updated again.
     LocalisedStrings *currentMappings = new             LocalisedStrings(String::createStringFromData(BinaryData::english_txt, BinaryData::english_txtSize), false);
     juce::LocalisedStrings::setCurrentMappings(currentMappings);
@@ -58,28 +51,6 @@ RepeatorAudioProcessor::RepeatorAudioProcessor()
     
     //Deep copy the English text into Original as the reference of translation.
     mArrSelectOriginal = mArrSelect;
-    
-    //other satate info
-    
-    static Identifier myDataNodeType("otherStateInfo");
-    ValueTree child(myDataNodeType);
-    //child.setProperty(mArrSelectID, var(mArrSelect), nullptr); //add a pair
-    child.setProperty(mSelectionID, var(mSelection), nullptr);  //add another
-    mAPVTS.state.addChild(child, 0, nullptr);               //add node to valuetree
-    
-    //otherStateInfo.referTo(child.getPropertyAsValue(mArrSelectID, nullptr));
-    otherStateInfo.referTo(child.getPropertyAsValue(mArrSelectID, nullptr));
-    
-    //mAPVTS.state.setProperty(mArrSelectID, var(mArrSelect), nullptr);
-    //otherStateInfo.referTo(mAPVTS.state.getPropertyAsValue(mArrSelectID, nullptr));
-    
-    //mAPVTS.state.setProperty(mSelectionID, var(mSelection), nullptr);
-    //otherStateInfo.referTo(mAPVTS.state.getPropertyAsValue(mSelectionID, nullptr));
-    
-    //mSelection = mAPVTS.getRawParameterValue("selectionInt");
-    //mSelection = child.getPropertyAsValue("selectionInt", nullptr);
-    mSelection = static_cast<int> (child.getProperty ("selectionInt"));
-    
 }
 
 
@@ -346,13 +317,23 @@ void RepeatorAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
     
-    XmlElement preset(("Repeator_StateInfo"));
-    XmlElement* presetBody = new XmlElement("Repeator_Preset");
-        
-    mPresetManager->getXmlForPreset(presetBody);
-        
-    preset.addChildElement(presetBody);
-    copyXmlToBinary (preset, destData);
+    
+    
+    
+    
+    static Identifier selectionIntID("selectionInt");
+    ValueTree child(selectionIntID);
+    child.setProperty(selectionIntID, var(mSelection), nullptr);
+    mAPVTS.state.addChild(child, 0, nullptr); //add node to valuetree
+    
+    
+    
+    
+    
+    auto state = mAPVTS.copyState();
+    std::unique_ptr<juce::XmlElement> xml (state.createXml());
+    copyXmlToBinary (*xml, destData);
+
     
 }
 
@@ -360,19 +341,21 @@ void RepeatorAudioProcessor::setStateInformation (const void* data, int sizeInBy
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
-    const auto xmlState = getXmlFromBinary(data, sizeInBytes);
-        
-    jassert (xmlState.get() != nullptr);
-        
-    for(auto* subchild : xmlState->getChildIterator())
-    {
-        mPresetManager->loadPresetForXml(subchild);
-    }
+
+    
+    std::unique_ptr<juce::XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+     
+    if (xmlState.get() != nullptr)
+        if (xmlState->hasTagName (mAPVTS.state.getType()))
+            mAPVTS.replaceState (juce::ValueTree::fromXml (*xmlState));
     
     
-    otherStateInfo.referTo(mAPVTS.state.getChild(0).getPropertyAsValue(mArrSelectID, nullptr));
     
     
+    
+    static Identifier selectionIntID("selectionInt");
+    
+    mSelection = mAPVTS.state.getChildWithName(selectionIntID)[selectionIntID];
     
     
     
