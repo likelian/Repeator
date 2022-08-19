@@ -328,12 +328,9 @@ void RepeatorAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     static Identifier languageID("languageInt"); //initial Identifier
     otherStateVT.setProperty(languageID, var(mLanguage), nullptr);
     
-    
-    
-    /*
     static Identifier arrSelectID("selectionStringArray"); //initial Identifier
     otherStateVT.setProperty(arrSelectID, var(mArrSelect), nullptr);
-    */
+
     
     mAPVTS.state.addChild(otherStateVT, 0, nullptr); //add child node to valuetree
     
@@ -360,10 +357,20 @@ void RepeatorAudioProcessor::setStateInformation (const void* data, int sizeInBy
     ValueTree otherStateVT = mAPVTS.state.getChildWithName(otherStateID);
     
     
-    /*
+    ///*
     static Identifier arrSelectID("selectionStringArray");
-    mArrSelect = static_cast<StringArray>(otherStateVT[arrSelectID]);
-    */
+    var varArrSelect = otherStateVT[arrSelectID];
+    //try static cast when everything is fixed
+    if (!varArrSelect.isVoid())
+    {
+        mArrSelect.clear();
+        for (int i=0; i<varArrSelect.size(); i++)
+        {
+            mArrSelect.add(varArrSelect[i]);
+        }
+    }
+    
+    
     
     
     

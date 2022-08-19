@@ -218,6 +218,7 @@ void RepeatorAudioProcessorEditor::LanguageChanged()
         LocalisedStrings *currentMappings = new             LocalisedStrings(String::createStringFromData(BinaryData::chinese_traditional_txt, BinaryData::chinese_traditional_txtSize), false);
         juce::LocalisedStrings::setCurrentMappings(currentMappings);
     }
+
     
     //update the language in mArrSelect of the first 4 selections
     for (int i = 0; i < audioProcessor.mArrSelectOriginal.size()-1; i++)
@@ -234,9 +235,9 @@ void RepeatorAudioProcessorEditor::LanguageChanged()
     
     mPeriodSLabel.setText (TRANS("Period"), juce::dontSendNotification);
     
+    
     mMenu.clear();
     mMenu.addItemList(audioProcessor.mArrSelect, 1);
     mMenu.setSelectedId(audioProcessor.mSelection + 1);
     mMenu.onChange = [this] { MenuChanged(); };
-
 }
