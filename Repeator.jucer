@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="WDxh9t" name="Repeator" projectType="audioplug" addUsingNamespaceToJuceHeader="1"
-              jucerFormatVersion="1" pluginManufacturer="Space Audio" cppLanguageStandard="17"
-              companyName="Space Audio" companyWebsite="likelian@me.com" pluginVST3Category="Tools"
-              displaySplashScreen="1">
+              jucerFormatVersion="1" pluginManufacturer="Voyagers Audio" cppLanguageStandard="17"
+              companyName="Voyagers Audio" companyWebsite="http://voyagersaudio.com/"
+              pluginVST3Category="Tools" displaySplashScreen="1" version="0.9.1">
   <MAINGROUP id="I2nTFP" name="Repeator">
     <GROUP id="{89CBD792-B362-348B-8176-DAD5E6A03E32}" name="Assets">
       <FILE id="H5pUTj" name="language-icon.svg" compile="0" resource="1"
