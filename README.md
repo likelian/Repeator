@@ -13,4 +13,4 @@ Repeator offers several built-in choices including **silence**, **white noise**,
 
 Download the installer for Mac | [download](https://github.com/likelian/Repeator/raw/main/Distribution/v.0.9.1/build/Repeator.pkg)
 
-Download the VST3 plugin for Windows | [download](https://github.com/likelian/Repeator/raw/main/Distribution/v.0.9.1/Repeator.vst3.zip)
+Windows is not supported as for right now. I just need a Windows environment to compile the plugin.
